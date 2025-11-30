@@ -1,0 +1,138 @@
+<!-- Fontawesome -->
+<link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
+
+<link rel="stylesheet" href="../public/assets/css/config.css">
+
+<!-- CDN Boostrap Css -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+<!-- CDN Boostrap Js  -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+
+
+<!-- JQUERY -->
+<script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
+
+<!-- Js -->
+<script src="../public/js/header.js"></script>
+
+<!-- Count the total of quantity of products in the cart -->
+<?php
+session_start();
+$totalOfQuantiy = 0;
+if (isset($_SESSION["cart"])) {
+    $productList = $_SESSION["cart"];
+    foreach ($productList as $product) {
+        $totalOfQuantiy += intval($product["customer_quantity"]);
+    }
+}
+include_once($_SERVER['DOCUMENT_ROOT'] . "/shopjewelry3/database/connection.php");
+
+$db = new Database();
+$dtb = $db->connect();
+
+$sql = "SELECT * FROM category WHERE isDeleted = 0 ORDER BY id DESC";
+$stmt = $dtb->prepare($sql);
+$stmt->execute();
+$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
+<div class="container-fluid">
+    <div class="row">
+        <header class="main-header">
+            <div class="common-header py-md-4 py-0 justify-content-md-around justify-content-lg-around justify-content-between">
+                <div class="top-left d-lg-flex d-md-flex d-none">
+                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-pinterest"></i>
+                    <i class="fa-brands fa-google"></i>
+                    <i class="fa-brands fa-square-instagram"></i>
+                </div>
+                <a href="./trangchu.php" class="logo">
+                    <i class="fas fa-gem"></i>
+                    Aurelia
+                </a>
+
+                <div class="top-right">
+                    <label for="userpanel" class="fa-solid fa-user"></label>
+                    <input type="checkbox" name="" id="userpanel" style="display: none;">
+                    <div class="login-options">
+                        <?php
+                        if (isset($_SESSION["id"])) {
+                            echo "
+                                <a href='./customerinfo.php'>
+                                    <i class='fa-solid fa-user'> </i>
+                                    <span>" . $_SESSION["fullname"] . "</span>
+                                </a>
+                                <a href='../includes/logout.inc.php'>
+                                    <i class='fa-solid fa-power-off'> </i>
+                                    <span>Đăng xuất</span>
+                                </a>";
+                        } else {
+                            echo "
+                                <a href='../templates/login.php'>
+                                    <i class='fa-solid fa-user-plus'></i>
+                                    <span> Đăng nhập</span>
+                                </a>
+                                <a href='../templates/signup.php'>
+                                    <i class='fa-solid fa-right-from-bracket'></i>
+                                    <span> Đăng ký</span>
+                                </a>";
+                        }
+                        ?>
+                    </div>
+                    <a href="javascript:void(0)"
+                        class="shoppingcart" style="cursor:pointer;">
+                        <i class="fa-solid fa-cart-shopping">
+                            <span class="quantity"><?php echo $totalOfQuantiy; ?></span>
+                        </i>
+                    </a>
+
+                    <button type="button" class="btn d-md-none d-lg-none d-flex text-dark text-end fs-4"
+                        data-bs-toggle="collapse" data-bs-target="#collapse-parent"
+                        aria-expanded="false" aria-controls="collapse-parent">
+                        <i class="fa-solid fa-bars ms-auto" style="color: #d4af37;"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <div class="bottom collapse d-lg-block d-md-block" id="collapse-parent">
+                <ul class="list-items bg-white w-100 p-0 m-0 flex-md-row flex-lg-row flex-column align-items-start">
+                    <li class="item">
+                        <a href="../templates/trangchu.php" style="text-decoration: none;">TRANG CHỦ</a>
+                    </li>
+                    <li class="item dropdown position-static">
+
+                        <a href="../templates/SanPham.php" class="text-decoration-none">SẢN PHẨM</a>
+
+                        <ul class="child-list-items show-on-hover">
+                            <?php
+                            if ($categories) {
+                                foreach ($categories as $row) {
+                                    echo '
+                <li class="child-item">
+                    <a href="/shopjewelry3/templates/SanPham.php?category_id=' . $row["id"] . '">' . $row["name"] . '</a>
+                </li>
+            ';
+                                }
+                            } else {
+                                echo "<li class='child-item'>Không có loại sản phẩm</li>";
+                            }
+                            ?>
+                        </ul>
+
+
+
+                    </li>
+                    <li class="item">
+                        <a href="../templates/gioithieu.php" style="text-decoration: none;">GIỚI THIỆU</a>
+                    </li>
+                    <li class="item">
+                        <a href="./feedback.php" style="text-decoration: none;">PHẢN HỒI</a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+    </div>
+</div>

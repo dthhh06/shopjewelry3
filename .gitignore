@@ -1,0 +1,17 @@
+# XAMPP & hệ thống
+/tmp
+*.log
+*.bak
+*.swp
+
+# IDE
+*.idea/
+*.vscode/
+
+# Node / Composer / Vendor
+node_modules/
+vendor/
+
+# Uploads / cache
+uploads/
+cache/

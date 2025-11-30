@@ -1,0 +1,9 @@
+input[type="radio"] {
+  accent-color: #b2976d;
+}
+
+button[name="place-order"]:hover,
+button[name="apply-discount-btn"]:hover {
+  background-color: #000 !important;
+  color: #fff !important;
+}
