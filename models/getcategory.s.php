@@ -1,6 +1,6 @@
 <?php
 
-include_once("../shopjewelry3/database/connection.php");
+include_once("../database/connection.php");
 
 class GetCategories extends Database
 {

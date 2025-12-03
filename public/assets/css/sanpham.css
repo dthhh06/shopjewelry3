@@ -7,6 +7,10 @@
 .main-bread-crumb {
   margin-top: 140px;
 }
+.breadcrumb{
+  text-decoration: none;
+  color: #000 !important;
+}
 
 /* Product View */
 .breadcrumb .current {
@@ -61,7 +65,7 @@
 
 .cart-icon:hover {
   background-color: #b2976d; 
-  cursor: pointer; /* Change cursor to pointer on hover */
+  cursor: pointer; 
 }
 
 #sort-by {
@@ -97,6 +101,10 @@
 
 .product .big {
   margin-bottom: 0;
+}
+.product .big a{
+  text-decoration: none;
+  color: #000;
 }
 
 .product-item {

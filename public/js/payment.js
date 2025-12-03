@@ -1,47 +1,62 @@
 import { isEmpty, isEmail, isPhoneNumber } from "./config.js";
 
 $(document).ready(function () {
-  function handleSubmitFeedback(event) {
-    let isValid = true;
-
-    // Check input fields before placing order
-    $(".form-group").each(function () {
-      const inputField = $(this).find("input");
-      const error = $(this).find(".error-message");
-
-      if (inputField.length && !isEmpty(inputField.val(), error)) {
-        isValid = false;
-      } else if (inputField.attr("type") === "email" && !isEmail(inputField.val(), error)) {
-        isValid = false;
-      } else if (inputField.attr("name") === "phonenumber" && !isPhoneNumber(inputField.val(), error)) {
-        isValid = false;
-      }
+    // Clear error khi input thay đổi
+    $(".form-group input, .form-group textarea").on("input", function () {
+        $(this).siblings(".error-message").text("");
     });
 
-    if (isValid) {
-      $(event.target).attr("type", "submit").trigger("click");
-    }
-  }
+    // Khi nhấn nút PLACE ORDER
+    $("button[name='place-order']").on("click", function (e) {
+        e.preventDefault();
 
-  // Bind input event listeners outside the loop
-  $(".form-group input, .form-group textarea").on("input", function () {
-    $(this).siblings(".error-message").text("");
-  });
+        const userId = $("input[name='userid']").data("userid");
+        if (userId === "none") {
+            alert("Bạn cần đăng nhập để đặt hàng!");
+            return;
+        }
 
-  // Handle events
-  $("button[name='place-order']")
-    .unbind("click")
-    .click((event) => {
-      const userId = $("input[name='userid']").data("userid");
+        let isValid = true;
 
-      if (userId !== "none") {
-        handleSubmitFeedback(event);
-      } else {
-        alert("Log in to place the order");
-      }
+        $(".form-group").each(function () {
+            const inputField = $(this).find("input, textarea");
+            const error = $(this).find(".error-message");
+
+            if (inputField.length) {
+                const val = inputField.val().trim();
+
+                if (!val && inputField.attr("name") !== "note") {
+                    error.text("Không được để trống");
+                    isValid = false;
+                } else if (inputField.attr("type") === "email" && !isEmail(val, error)) {
+                    isValid = false;
+                } else if (inputField.attr("name") === "phonenumber" && !isPhoneNumber(val, error)) {
+                    isValid = false;
+                }
+            }
+        });
+
+        if (!isValid) return;
+
+        // Lấy phương thức thanh toán
+        const selectedPayment = $("input[name='payment_method']:checked").val();
+        $("#selected_payment").val(selectedPayment);
+
+        // Redirect MoMo / VNPay
+        if (selectedPayment === "momo") {
+            window.location.href = "../includes/momo_atm.php";
+            return;
+        } else if (selectedPayment === "vnpay") {
+            window.location.href = "../includes/vnpay.php";
+            return;
+        }
+
+        // COD → submit form bình thường
+        $(this).closest("form").submit();
     });
 
-  $("#homepage")
-    .unbind("click")
-    .click(() => (window.location.href = "../templates/trangchu.php"));
+    // Nút quay về trang chủ (nếu có)
+    $("#homepage").on("click", function () {
+        window.location.href = "../templates/trangchu.php";
+    });
 });

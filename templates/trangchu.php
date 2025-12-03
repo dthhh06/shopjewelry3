@@ -19,6 +19,132 @@
     <!-- ICON -->
     <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
 </head>
+<style>
+.product .big a{
+    text-decoration: none;
+    color: #000;
+}
+    /* Hero Section */
+    .hero-wrapper {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 5%;
+    }
+
+    /* Video nền */
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: translate(-50%, -50%);
+        z-index: -2;
+    }
+
+    .contentt {
+        font-family: "Dancing Script", Arial, Helvetica, sans-serif;
+        width: 100%;
+        display: block;
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .hero-content {
+        max-width: 600px;
+        margin: 0 auto;
+        animation: fadeIn 1.5s ease-out;
+    }
+
+    .hero-subtitle {
+        font-family: 'Cinzel', serif;
+        color: #b2976d;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-title {
+        font-family: 'Cinzel', serif;
+        font-size: 2rem;
+        color: #2a2a2a;
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .hero-description {
+        font-family: "Dancing Script", serif;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        color: #555;
+    }
+
+    .btn {
+        padding: 0.7rem 2rem !important;
+        font-size: 0.95rem !important;
+        background: transparent !important;
+        color: #000000ff !important;
+        border: 2px solid #000 !important;
+        border-radius: 0 !important;
+        font-family: 'Cinzel', serif !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: inline-block !important;
+        text-decoration: none !important;
+    }
+
+    .btn:hover {
+        background: #000000ff !important;
+        color: white !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .img-responsive {
+        border: 2px solid #f0e8daff !important;
+        padding: 2px;
+    }
+
+    /* Collection Banner */
+    .collection-banner {
+        height: 60vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: linear-gradient(rgba(0, 0, 0, 0.363), rgba(0, 0, 0, 0.158)),
+            url('../assets/imgs/banner/bg1.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        color: white !important;
+        text-align: center !important;
+        padding: 0 5% !important;
+    }
+
+    .banner-content {
+        max-width: 800px !important;
+    }
+
+    .banner-title {
+        font-family: 'Cinzel', serif !important;
+        font-size: 3rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .banner-text {
+        font-family: "Dancing Script", Arial, Helvetica, sans-serif !important;
+        font-size: 1.2rem !important;
+        margin-bottom: 2rem !important;
+        opacity: 0.9 !important;
+    }
+    
+</style>
 
 <body>
     <?php
@@ -36,37 +162,35 @@
     <!-- Home Section -->
     <section class="home-section">
         <!-- Hero Section -->
-        <div class="hero">
+        <div class="hero-wrapper">
+
+            <video class="hero-video" autoplay muted loop>
+                <source src="../assets/imgs/banner/bg.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="contentt">
             <div class="hero-content">
                 <p class="hero-subtitle">EXQUISITE COLLECTION</p>
                 <h1 class="hero-title">Timeless Elegance in Every Detail</h1>
-                <p class="hero-description">Discover our handcrafted jewelry pieces, meticulously designed to celebrate
-                    life's most precious moments with unparalleled beauty and craftsmanship.</p>
+                <p class="hero-description">
+                    Discover our handcrafted jewelry pieces, meticulously designed to celebrate
+                    life's most precious moments with unparalleled beauty and craftsmanship.
+                </p>
                 <a href="#" class="btn">Explore Collection</a>
             </div>
         </div>
 
-    <!-- Start Hot Deal -->
-    <section class="section-top-60">
-        <div class="shell position-relative">
-            <h3>
-                <a href="">HOT DEAL</a>
-            </h3>
+        <!-- Start Hot Deal -->
+        <section class="section-top-60">
+            <div class="container">
+                <h2 class="text-center">HOT DEALS</h2>
+                <div class="hot-deal-prd row flex-nowrap"></div>
 
-            <hr class="divider divider-base divider-bold">
-
-            <div class="hot-deal-prd row flex-nowrap"></div>
-
-            <!-- Next and Previous buttons -->
-            <button type="button" title="next" class="position-absolute btn btn-primary rounded-circle next" style="top:180px; right:-24px; background-color:#b2976d;">
-                <i class="fa-solid fa-caret-right text-center m-0" style="font-size: 20px; vertical-align:middle;"></i>
-            </button>
-            <button type="button" title="previous" class="position-absolute btn btn-primary rounded-circle prev" style="top:180px; left:-24px; background-color:#b2976d;">
-                <i class="fa-solid fa-caret-left text-center m-0" style="font-size: 20px; vertical-align:middle"></i>
-            </button>
-        </div>
-    </section>
-    <!-- End Hot Deal -->
+                <div class="row hot-deal-prd"></div>
+                <div class="d-flex justify-content-center mt-3"> <button class="prev btn btn-outline-dark me-3">Prev</button> <button class="next btn btn-outline-dark">Next</button> </div>
+            </div>
+        </section>
+        <!-- End Hot Deal -->
 
         <!-- Collection Banner -->
         <div class="collection-banner">
@@ -120,16 +244,7 @@
             </div>
         </div>
 
-        <!-- Newsletter -->
-        <div class="newsletter">
-            <h2 class="newsletter-title">Join Our Newsletter</h2>
-            <p class="newsletter-text">Subscribe to receive updates on new collections, exclusive offers, and styling
-                inspiration.</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Your email address" class="newsletter-input" required>
-                <button type="submit" class="newsletter-btn">Subscribe</button>
-            </form>
-        </div>
+
 
     </section>
 
@@ -205,6 +320,16 @@
         </div>
     </section>
     <!-- End product -->
+             <!-- Newsletter -->
+        <div class="newsletter">
+            <h2 class="newsletter-title">Join Our Newsletter</h2>
+            <p class="newsletter-text">Subscribe to receive updates on new collections, exclusive offers, and styling
+                inspiration.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Your email address" class="newsletter-input" required>
+                <button type="submit" class="newsletter-btn">Subscribe</button>
+            </form>
+        </div>
 
 
 

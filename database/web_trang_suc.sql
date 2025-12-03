@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th10 30, 2025 lúc 07:28 PM
+-- Thời gian đã tạo: Th12 01, 2025 lúc 02:26 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -138,7 +138,13 @@ CREATE TABLE `import` (
 
 INSERT INTO `import` (`id`, `total_import_order`, `user_id`, `supplier_id`, `created_at`, `isDeleted`) VALUES
 (1, 112000000, 3, 1, '2025-11-20', 0),
-(2, 973500000, 1, 2, '2025-11-20', 0);
+(2, 973500000, 1, 2, '2025-11-20', 0),
+(3, 2147483647, 1, 4, '2025-12-01', 1),
+(4, 1600000000, 1, 4, '2025-12-01', 0),
+(5, NULL, 1, 4, '2025-12-01', 1),
+(6, 1000000000, 1, 5, '2025-12-01', 0),
+(7, 200000000, 3, 6, '2025-12-01', 1),
+(8, 100000000, 3, 6, '2025-12-01', 0);
 
 --
 -- Bẫy `import`
@@ -177,7 +183,8 @@ INSERT INTO `importdetail` (`import_id`, `product_id`, `amount`, `price`, `total
 (1, 4, 50, 700000, 35000000, 0),
 (2, 6, 200, 3540000, 708000000, 0),
 (2, 3, 35, 3540000, 123900000, 0),
-(2, 4, 40, 3540000, 141600000, 0);
+(2, 4, 40, 3540000, 141600000, 0),
+(8, 29, 10, 10000000, 100000000, 0);
 
 --
 -- Bẫy `importdetail`
@@ -388,6 +395,8 @@ CREATE TABLE `product` (
   `category_id` int(11) DEFAULT NULL,
   `discount` int(11) DEFAULT NULL,
   `thumbnail` varchar(500) DEFAULT NULL,
+  `image1` varchar(500) DEFAULT NULL,
+  `image2` varchar(500) DEFAULT NULL,
   `description` varchar(500) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
   `created_at` date DEFAULT NULL,
@@ -402,31 +411,32 @@ CREATE TABLE `product` (
 -- Đang đổ dữ liệu cho bảng `product`
 --
 
-INSERT INTO `product` (`id`, `title`, `price`, `category_id`, `discount`, `thumbnail`, `description`, `quantity`, `created_at`, `updated_at`, `deleted`, `isShow`, `isOutstanding`, `isNew`) VALUES
-(1, 'Bông tai cao cấp Biz', 315000, 4, 10, '../assets/imgs/img1.png', 'Sản phẩm này rất đẹp', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(2, 'Nhẫn vòng ADV', 600163, 1, 5, '../assets/imgs/Nhẫn vòng ADV.png', 'Sản phẩm hot nhất hiện nay', 8, '2025-11-20', '2025-11-30', 0, 1, 1, 1),
-(3, 'Nhẫn vàng cao cấp', 460952, 1, 13, '../assets/imgs/Nhẫn vàng cao cấp.png', 'Sản phẩm hot nhất hiện nay', 135, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
-(4, 'Nhẫn hồng khắc tê', 459270, 1, 10, '../assets/imgs/Nhẫn hồng khắc tê.png', 'Sản phẩm hot nhất hiện nay', 87, '2025-11-20', '2025-12-01', 0, 1, 1, 1),
-(5, 'Nhẫn tình yêu', 644000, 1, 8, '../assets/imgs/Nhẫn tình yêu.png', 'Sản phẩm hot nhất hiện nay', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(6, 'Trâm Cài Tóc Bằng Gỗ Cao Cấp', 648000, 3, 10, '../assets/imgs/Trâm Cài Tóc Bằng Gỗ Cao Cấp.png', 'Sản phẩm tốt nhất cho người giàu', 200, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
-(7, 'Dây chuyền bạc Moments mạ vàng 14K vô cực', 540000, 2, 10, '../assets/imgs/Dây Chuyền Bạc Moments Mạ Vàng 14K Vô Cực.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(8, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(9, 'Nhẫn Bạc Moments Vương Miện Đính Đá', 750000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Vương Miện Đính Đá.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(10, 'Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao', 870000, 2, 0, '../assets/imgs/Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(11, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(12, 'Trâm Cài Tóc Hoa Mai Trắng', 320000, 3, 0, '../assets/imgs/Trâm Cài Tóc Hoa Mai Trắng.png', 'Đây là một Trâm Cài Tóc Đơn Giản', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(13, 'Trâm Cài Tóc Ngọc Bích Đơn Giản', 576000, 3, 10, '../assets/imgs/Trâm Cài Tóc Ngọc Bích Đơn GIẢN.png', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(14, 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc', 999999, 3, 0, '../assets/imgs/Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc.png', 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc là sản phẩm được làm thủ công chất liệu bạc ta 99\r\n\r\n* Thông tin chi tiết về sản phẩm\r\n\r\n– Chất liệu : bạc 99\r\n\r\n– Kích thước : dài 17cm\r\n\r\n– Trọng lượng : ~ 45garm', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(15, 'Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá', 800000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá.png', 'Tôn lên khuôn mặt của bạn với Bông Tai Thả Tám Viên Đá Lấp Lánh của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai này có một hàng gồm 8 viên đá cubic zirconia trong suốt, treo nhẹ nhàng theo cặp. Thiết kế độc đáo này cho phép phối phong cách linh hoạt, trong khi nút tai hình trái tim đảm bảo sự vững chắc. Thể hiện bản thân với cặp bông tai nhẹ nhàng, lấp lánh này - hoàn hảo để thêm một chút sang trọng cho bất kỳ dịp nào. Được bán theo cặp, những chiếc bông tai thả bạc sterling này là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(16, 'Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai', 700000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai.png', 'Biến sự thanh lịch thành khẩu hiệu của bạn với Bông Tai Hạt Nước Ngọt được Xử Lý của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai thả này có một dãy bốn hạt nước ngọt được xử lý trên mỗi chiếc. Hình mô tả chuỗi kết nối từng viên ngọc, tạo ra một trò chơi chiều sâu độc đáo. Có ý đồ khác nhau về kích thước, những viên ngọc này tượng trưng cho vẻ đẹp, tình yêu và sự khôn ngoan. Hoàn hảo kết hợp với nút tai hình trái tim, những chiếc bông tai này là một bổ sung cổ điển cho bộ sưu tập tra', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(17, 'Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh', 900000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh.png', 'Diễn đạt sâu sắc tình yêu của bạn với Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh. Những chiếc bông tai bạc  thanh lịch này mỗi chiếc đều có một viên đá Pha lê Xanh hình Chữ Nhật lấp lánh ở trung tâm tạo nên một diện mạo hiện đại và cao cấp.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(18, 'Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn.png', 'Giữ cho nó cổ điển với Bông Tai Cài Ngọc Nước Ngọt 7mm bằng bạc sterling này. Những viên ngọc lấp lánh có kích thước 7mm, được đặt một cách tinh tế, thể hiện sự thanh lịch vĩnh cửu. Được đảm bảo bằng nút tai hình trái tim, cặp bông tai này vừa cổ điển vừa hiện đại. Là một sự bổ sung hoàn hảo cho bộ sưu tập bông tai của bạn, những chiếc bông tai cài ngọc này tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu được tượng trưng bởi ngọc nước ngọt được xử lý. Lưu ý rằng mỗi viên ngọc nước ngọt được xử lý là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(19, 'Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai.png', 'Kết hợp sự thanh lịch và hiện đại với Bông Tai Cài Ngọc Nước Ngọt & Vòng Tròn Lấp Lánh bằng bạc sterling của chúng tôi. Thiết kế độc đáo với một viên ngọc lấp lánh được đặt trong một vòng tròn lấp lánh bằng cubic zirconia trong suốt. Viên ngọc lệch tâm tạo nên một chút không đối xứng, được bổ sung bởi nút tai hình trái tim. Được bán theo cặp, những chiếc bông tai này kết hợp giữa ngọc truyền thống với thiết kế hiện đại, tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu. Lưu ý rằng mỗi viên ngọc nước ng', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(20, 'Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô.png', 'Theo đuổi lời kêu gọi của chiếc bóng với Dây Chuyền Disney Cinderella Carriage Collier từ bộ sưu tập Disney x Pandora. Chiếc dây chuyền bạc sterling này có một mặt nạ tinh tế được lấy cảm hứng từ chiếc xe bí ngô phù thủy của Cinderella, với một viên đá hình lá cẩm màu xanh được bao quanh bởi các chi tiết mở xoắn. Những viên đá cubic zirconia nhỏ lấp lánh trên bánh xe và thân bí ngô. Mặt nạ được cố định trên dây chuyền và có thể điều chỉnh được thành ba chiều dài. Kết hợp nó với đôi bông tai nút ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(21, 'Hoa Tai Bạc Disney x Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Hoa Tai Bạc Disney x Xe Bí Ngô.png', '', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(22, 'Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương', 600000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương.png', 'Đeo một biểu tượng của sự vĩnh cửu với Nhẫn Blue Eternity Circle. Chiếc nhẫn bạc sterling này có một viên đá pha lê màu xanh lấp lánh được đặt bằng móng vuốt. Dải nhẫn bóng mịn xoay quanh viên đá trung tâm trong một mô hình vô cùng mở rộng. Cho dù bạn muốn mang theo một lời nhắc về tình yêu vĩnh cửu hay một biểu tượng của niềm vui vô tận trải qua từng khoảnh khắc, chiếc nhẫn vô cùng màu sắc này sẽ mang đến ý nghĩa lấp lánh cho diện mạo của bạn.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(23, 'Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ.png', 'Đối mặt với các yếu tố với Dây Chuyền Dây Nhà Rồng trong trò chơi Ngôi Nhà của Rồng. Được làm từ bạc Sterling, dây chuyền có độ dài có thể điều chỉnh này có một mặt dây chuyền biểu thị một con rồng trong trò chơi Ngôi Nhà của Rồng nằm cuộn tròn với cánh rộng và đuôi vòng quanh một viên đá nhân tạo màu đỏ. Một viên đá màu đỏ khác lấp lánh từ đầu của dây chuyền mặt dây chuyền. Đeo chiếc mặt dây chuyền này như một biểu tượng cho những bí ẩn vĩ đại và mạnh mẽ của thế giới - cả trong hư cấu và thực t', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(24, 'Nhẫn Bạc Timeless Lượn Sóng', 600000, 2, 0, '../assets/imgs/Nhẫn Bạc Timeless Lượn Sóng.png', 'Được chế tác từ bạc sterling, chiếc Nhẫn Polished Wave của chúng tôi uốn cong để giống như sự chuyển động của một đợt sóng, với bề mặt được đánh bóng mịn. Xếp chồng nhiều chiếc nhẫn bạc sterling cùng nhau hoặc kết hợp với phiên bản pavé trong các gam màu kim loại khác nhau để tạo nên một diện mạo đương đại mà bạn sẽ yêu thích suốt nhiều năm tới.', 0, '2025-11-20', NULL, 0, 1, 1, 1);
+INSERT INTO `product` (`id`, `title`, `price`, `category_id`, `discount`, `thumbnail`, `image1`, `image2`, `description`, `quantity`, `created_at`, `updated_at`, `deleted`, `isShow`, `isOutstanding`, `isNew`) VALUES
+(1, 'Bông tai cao cấp Biz', 315000, 4, 10, '../assets/imgs/img1.png', NULL, NULL, 'Sản phẩm này rất đẹp', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(2, 'Nhẫn vòng ADV', 600163, 1, 5, '../assets/imgs/Nhẫn vòng ADV.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 8, '2025-11-20', '2025-11-30', 0, 1, 1, 1),
+(3, 'Nhẫn vàng cao cấp', 460952, 1, 13, '../assets/imgs/Nhẫn vàng cao cấp.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 135, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
+(4, 'Nhẫn hồng khắc tê', 459270, 1, 10, '../assets/imgs/Nhẫn hồng khắc tê.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 87, '2025-11-20', '2025-12-01', 0, 1, 1, 1),
+(5, 'Nhẫn tình yêu', 644000, 1, 8, '../assets/imgs/Nhẫn tình yêu.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(6, 'Trâm Cài Tóc Bằng Gỗ Cao Cấp', 648000, 3, 10, '../assets/imgs/Trâm Cài Tóc Bằng Gỗ Cao Cấp.png', NULL, NULL, 'Sản phẩm tốt nhất cho người giàu', 200, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
+(7, 'Dây chuyền bạc Moments mạ vàng 14K vô cực', 540000, 2, 10, '../assets/imgs/Dây Chuyền Bạc Moments Mạ Vàng 14K Vô Cực.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(8, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(9, 'Nhẫn Bạc Moments Vương Miện Đính Đá', 750000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Vương Miện Đính Đá.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(10, 'Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao', 870000, 2, 0, '../assets/imgs/Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(11, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(12, 'Trâm Cài Tóc Hoa Mai Trắng', 320000, 3, 0, '../assets/imgs/Trâm Cài Tóc Hoa Mai Trắng.png', NULL, NULL, 'Đây là một Trâm Cài Tóc Đơn Giản', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(13, 'Trâm Cài Tóc Ngọc Bích Đơn Giản', 576000, 3, 10, '../assets/imgs/Trâm Cài Tóc Ngọc Bích Đơn GIẢN.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(14, 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc', 999999, 3, 0, '../assets/imgs/Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc.png', NULL, NULL, 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc là sản phẩm được làm thủ công chất liệu bạc ta 99\r\n\r\n* Thông tin chi tiết về sản phẩm\r\n\r\n– Chất liệu : bạc 99\r\n\r\n– Kích thước : dài 17cm\r\n\r\n– Trọng lượng : ~ 45garm', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(15, 'Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá', 800000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá.png', NULL, NULL, 'Tôn lên khuôn mặt của bạn với Bông Tai Thả Tám Viên Đá Lấp Lánh của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai này có một hàng gồm 8 viên đá cubic zirconia trong suốt, treo nhẹ nhàng theo cặp. Thiết kế độc đáo này cho phép phối phong cách linh hoạt, trong khi nút tai hình trái tim đảm bảo sự vững chắc. Thể hiện bản thân với cặp bông tai nhẹ nhàng, lấp lánh này - hoàn hảo để thêm một chút sang trọng cho bất kỳ dịp nào. Được bán theo cặp, những chiếc bông tai thả bạc sterling này là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(16, 'Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai', 700000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai.png', NULL, NULL, 'Biến sự thanh lịch thành khẩu hiệu của bạn với Bông Tai Hạt Nước Ngọt được Xử Lý của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai thả này có một dãy bốn hạt nước ngọt được xử lý trên mỗi chiếc. Hình mô tả chuỗi kết nối từng viên ngọc, tạo ra một trò chơi chiều sâu độc đáo. Có ý đồ khác nhau về kích thước, những viên ngọc này tượng trưng cho vẻ đẹp, tình yêu và sự khôn ngoan. Hoàn hảo kết hợp với nút tai hình trái tim, những chiếc bông tai này là một bổ sung cổ điển cho bộ sưu tập tra', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(17, 'Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh', 900000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh.png', NULL, NULL, 'Diễn đạt sâu sắc tình yêu của bạn với Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh. Những chiếc bông tai bạc  thanh lịch này mỗi chiếc đều có một viên đá Pha lê Xanh hình Chữ Nhật lấp lánh ở trung tâm tạo nên một diện mạo hiện đại và cao cấp.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(18, 'Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn.png', NULL, NULL, 'Giữ cho nó cổ điển với Bông Tai Cài Ngọc Nước Ngọt 7mm bằng bạc sterling này. Những viên ngọc lấp lánh có kích thước 7mm, được đặt một cách tinh tế, thể hiện sự thanh lịch vĩnh cửu. Được đảm bảo bằng nút tai hình trái tim, cặp bông tai này vừa cổ điển vừa hiện đại. Là một sự bổ sung hoàn hảo cho bộ sưu tập bông tai của bạn, những chiếc bông tai cài ngọc này tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu được tượng trưng bởi ngọc nước ngọt được xử lý. Lưu ý rằng mỗi viên ngọc nước ngọt được xử lý là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(19, 'Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai.png', NULL, NULL, 'Kết hợp sự thanh lịch và hiện đại với Bông Tai Cài Ngọc Nước Ngọt & Vòng Tròn Lấp Lánh bằng bạc sterling của chúng tôi. Thiết kế độc đáo với một viên ngọc lấp lánh được đặt trong một vòng tròn lấp lánh bằng cubic zirconia trong suốt. Viên ngọc lệch tâm tạo nên một chút không đối xứng, được bổ sung bởi nút tai hình trái tim. Được bán theo cặp, những chiếc bông tai này kết hợp giữa ngọc truyền thống với thiết kế hiện đại, tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu. Lưu ý rằng mỗi viên ngọc nước ng', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(20, 'Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô.png', NULL, NULL, 'Theo đuổi lời kêu gọi của chiếc bóng với Dây Chuyền Disney Cinderella Carriage Collier từ bộ sưu tập Disney x Pandora. Chiếc dây chuyền bạc sterling này có một mặt nạ tinh tế được lấy cảm hứng từ chiếc xe bí ngô phù thủy của Cinderella, với một viên đá hình lá cẩm màu xanh được bao quanh bởi các chi tiết mở xoắn. Những viên đá cubic zirconia nhỏ lấp lánh trên bánh xe và thân bí ngô. Mặt nạ được cố định trên dây chuyền và có thể điều chỉnh được thành ba chiều dài. Kết hợp nó với đôi bông tai nút ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(21, 'Hoa Tai Bạc Disney x Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Hoa Tai Bạc Disney x Xe Bí Ngô.png', NULL, NULL, '', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(22, 'Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương', 600000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương.png', NULL, NULL, 'Đeo một biểu tượng của sự vĩnh cửu với Nhẫn Blue Eternity Circle. Chiếc nhẫn bạc sterling này có một viên đá pha lê màu xanh lấp lánh được đặt bằng móng vuốt. Dải nhẫn bóng mịn xoay quanh viên đá trung tâm trong một mô hình vô cùng mở rộng. Cho dù bạn muốn mang theo một lời nhắc về tình yêu vĩnh cửu hay một biểu tượng của niềm vui vô tận trải qua từng khoảnh khắc, chiếc nhẫn vô cùng màu sắc này sẽ mang đến ý nghĩa lấp lánh cho diện mạo của bạn.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(23, 'Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ.png', NULL, NULL, 'Đối mặt với các yếu tố với Dây Chuyền Dây Nhà Rồng trong trò chơi Ngôi Nhà của Rồng. Được làm từ bạc Sterling, dây chuyền có độ dài có thể điều chỉnh này có một mặt dây chuyền biểu thị một con rồng trong trò chơi Ngôi Nhà của Rồng nằm cuộn tròn với cánh rộng và đuôi vòng quanh một viên đá nhân tạo màu đỏ. Một viên đá màu đỏ khác lấp lánh từ đầu của dây chuyền mặt dây chuyền. Đeo chiếc mặt dây chuyền này như một biểu tượng cho những bí ẩn vĩ đại và mạnh mẽ của thế giới - cả trong hư cấu và thực t', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(24, 'Nhẫn Bạc Timeless Lượn Sóng', 600000, 2, 0, '../assets/imgs/Nhẫn Bạc Timeless Lượn Sóng.png', NULL, NULL, 'Được chế tác từ bạc sterling, chiếc Nhẫn Polished Wave của chúng tôi uốn cong để giống như sự chuyển động của một đợt sóng, với bề mặt được đánh bóng mịn. Xếp chồng nhiều chiếc nhẫn bạc sterling cùng nhau hoặc kết hợp với phiên bản pavé trong các gam màu kim loại khác nhau để tạo nên một diện mạo đương đại mà bạn sẽ yêu thích suốt nhiều năm tới.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
+(29, 'Vòng tay Dior', 14406000, 5, 2, '../assets/imgs/1764581142_lactaydior.jpg', '../assets/imgs/1764581142_1_lactaydior1.jpg', '../assets/imgs/1764581142_2_lactaydior2.jpg', 'Lắc tay xinh xinh', 10, '2025-12-01', '2025-12-01', 0, 1, 1, 1);
 
 --
 -- Bẫy `product`
@@ -677,7 +687,10 @@ CREATE TABLE `supplier` (
 INSERT INTO `supplier` (`id`, `name`, `address`, `contact`, `isDeleted`) VALUES
 (1, 'DOJI', '396 Nguyễn Chí Thanh, P. 16, Quận 3', '0653322489', 0),
 (2, 'PNG', '466 Hai Bà Trưng, P. Tân Định, Quận 1', '02846203198', 0),
-(3, 'SJC', '418 - 420 Nguyễn Thị Minh Khai, Phường 5, Quận 3', '02835356561', 0);
+(3, 'SJC', '418 - 420 Nguyễn Thị Minh Khai, Phường 5, Quận 3', '02835356561', 0),
+(4, 'Tiffany & Co', '123 Trần Đại Nghĩa, Đà Nẵng', '0213456678', 0),
+(5, 'Cartier', '567 Lê Văn Hiến', '0998765432', 0),
+(6, 'Dior', '888 Nguyễn Văn Linh-Đà Nẵng', '099987654', 0);
 
 -- --------------------------------------------------------
 
@@ -847,7 +860,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT cho bảng `import`
 --
 ALTER TABLE `import`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `order`
@@ -871,7 +884,7 @@ ALTER TABLE `permission`
 -- AUTO_INCREMENT cho bảng `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT cho bảng `role`
@@ -889,7 +902,7 @@ ALTER TABLE `role_permission`
 -- AUTO_INCREMENT cho bảng `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `user`

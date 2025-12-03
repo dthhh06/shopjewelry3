@@ -10,7 +10,7 @@
     <div class="mb-3">
         <label>Danh mục</label>
         <select name="category_id" class="form-control" required>
-            <?php while($c = $cats->fetch_assoc()) { ?>
+            <?php while ($c = $cats->fetch_assoc()) { ?>
                 <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
             <?php } ?>
         </select>
@@ -34,8 +34,15 @@
     </div>
 
     <div class="mb-3">
-        <label>Ảnh sản phẩm</label>
+        <label>Ảnh sản phẩm (1)</label>
         <input type="file" name="thumbnail" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label>Ảnh sản phẩm (2)</label>
+        <input type="file" name="image1" class="form-control">
+    </div>    <div class="mb-3">
+        <label>Ảnh sản phẩm (3)</label>
+        <input type="file" name="image2" class="form-control">
     </div>
 
     <div class="mb-3">

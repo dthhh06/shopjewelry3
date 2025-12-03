@@ -64,7 +64,7 @@
                                 <span class="error-message"></span>
                             </div>
 
-                            <button type="button" class="btn btn--active btn-login" name="login" value="login" style="color: #fff!important;">ĐĂNG NHẬP</button>
+                            <button type="button" class="btn btn--active btn-login" name="login" value="login">ĐĂNG NHẬP</button>
                             <a href="./signup.php">Đăng ký</a>
                         </form>
                     </div>

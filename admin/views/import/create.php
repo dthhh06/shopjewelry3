@@ -1,6 +1,6 @@
 <h1 class="mt-4">Tạo phiếu nhập</h1>
 
-<form action="admin.php?act=import-store" method="POST">
+<form action="index.php?act=import-store" method="POST">
 
     <div class="row">
         <div class="col-md-4">

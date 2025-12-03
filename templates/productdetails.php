@@ -4,21 +4,15 @@ $username = "root";
 $password = "";
 $dbname = "web_trang_suc";
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 $id = isset($_GET['data-productid']) ? $_GET['data-productid'] : "";
-// Tạo truy vấn SQL
+
 $sql = "SELECT * FROM `product` WHERE id = ?";
-// Chuẩn bị và thực thi truy vấn
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
-// Lấy kết quả
 $result = $stmt->get_result();
 $productDetails = $result->fetch_assoc();
 ?>
@@ -30,19 +24,41 @@ $productDetails = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sản Phẩm</title>
-    <!-- CSS -->
+
     <link rel="stylesheet" href="../public/assets/css/config.css">
     <link rel="stylesheet" href="../public/assets/css/sanpham.css">
-
-    <!-- ICON -->
     <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
-    <!-- JQUERY -->
     <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
-
-    <!-- JS -->
     <script src="../public/js/cart.js"></script>
-    <script src="../public/js/productdetail.js"></script>
+
+    <script>
+        function changeImage(src) {
+            document.getElementById("mainImage").src = src;
+        }
+    </script>
+
     <style>
+        .thumb-list img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .thumb-list img:hover {
+            border-color: #d4af37;
+        }
+
+        .big-image img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
         .product-info {
             margin-left: 100px;
         }
@@ -57,99 +73,114 @@ $productDetails = $result->fetch_assoc();
 
 <body>
     <div class="page">
-        <!--Start Header-->
-        <?php include_once('header.php'); ?>
-        <!-- End Header -->
 
+        <?php include_once('header.php'); ?>
 
         <div class="container" style="margin-top: 160px;">
+
             <div class="row">
-                <!--Start bread-crumb -->
                 <div class="main-bread-crumb">
                     <?php
-
                     $breadcrumb_parts = [
                         ['name' => 'Trang chủ', 'url' => 'trangchu.php'],
                         ['name' => 'Sản phẩm', 'url' => 'SanPham.php'],
-                        ['name' => $productDetails['title'], 'url' => 'productdetails.php'],
-
+                        ['name' => $productDetails['title'], 'url' => 'productdetails.php?'],
                     ];
 
-                    // Tạo một chuỗi HTML từ mảng này
                     $breadcrumb_html = array_map(function ($part) {
-                        // Kiểm tra xem URL của phần này có phải là URL của trang hiện tại không
-                        $is_current_page = (parse_url(str_replace('/shopjewelry3/templates/', '', $_SERVER['REQUEST_URI']), PHP_URL_PATH) == $part['url']);
-
-                        // Nếu đúng, thêm lớp 'current' vào phần tử này
-                        $class = $is_current_page ? ' class="current"' : '';
-
-                        return '<a href="' . $part['url'] . '"' . $class . '>' . $part['name'] . '</a>';
+                        $is_current = (parse_url(str_replace('/shopjewelry3/templates/', '', $_SERVER['REQUEST_URI']), PHP_URL_PATH) == $part['url']);
+                        return '<a href="' . $part['url'] . '"' . ($is_current ? ' class="current"' : '') . '>' . $part['name'] . '</a>';
                     }, $breadcrumb_parts);
 
-                    // Chuyển mảng thành chuỗi, phân tách bởi ' > '
-                    $breadcrumb_html = implode(' > ', $breadcrumb_html);
-
-                    // Hiển thị breadcrumb
-                    echo '<div class="breadcrumb">' . $breadcrumb_html . '</div>';
-
+                    echo '<div class="breadcrumb">' . implode(' > ', $breadcrumb_html) . '</div>';
                     ?>
                 </div>
-                <!-- End bread-crumb -->
             </div>
-            <div class="row productdetail-item" data-productquantity="<?php echo $productDetails["quantity"]; ?>" data-productid="<?php echo $productDetails["id"]; ?>">
+
+            <!-- ==================== PRODUCT DETAILS ======================== -->
+            <div class="row productdetail-item" data-productquantity="<?= $productDetails["quantity"]; ?>" data-productid="<?= $productDetails["id"]; ?>">
+
+                <!-- LEFT IMAGES -->
                 <div class="col-md-6 col-lg-16 col-12">
-                    <div class="pro-image">
-                        <img class="img-responsive" style="object-fit: cover; object-position: center;" src="<?php echo $productDetails['thumbnail']; ?>" alt="">
+
+                    <div class="big-image">
+                        <img id="mainImage" src="<?= $productDetails['thumbnail']; ?>" alt="">
+                    </div>
+
+                    <div class="thumb-list mt-3 d-flex">
+
+                        <!-- Thumbnail -->
+                        <img onclick="changeImage('<?= $productDetails['thumbnail']; ?>')" 
+                             src="<?= $productDetails['thumbnail']; ?>">
+
+                        <!-- Image 1 -->
+                        <?php if (!empty($productDetails['image1'])) { ?>
+                            <img onclick="changeImage('<?= $productDetails['image1']; ?>')" 
+                                 src="<?= $productDetails['image1']; ?>">
+                        <?php } ?>
+
+                        <!-- Image 2 -->
+                        <?php if (!empty($productDetails['image2'])) { ?>
+                            <img onclick="changeImage('<?= $productDetails['image2']; ?>')" 
+                                 src="<?= $productDetails['image2']; ?>">
+                        <?php } ?>
+
                     </div>
                 </div>
+
+                <!-- RIGHT INFO -->
                 <div class="col-md-6 col-lg-16 col-12">
                     <div class="product-info mt-lg-0 mt-md-0 m-0 mt-3">
+
                         <div class="border-item-bottom">
-                            <h2 class="pro-name"><?php echo $productDetails['title']; ?></h2>
-                            <div class="pro-price margin-bottom-20"><?php echo $productDetails['price']; ?> </div>
+                            <h2 class="pro-name"><?= $productDetails['title']; ?></h2>
+                            <div class="pro-price margin-bottom-20"><?= number_format($productDetails['price']); ?>đ</div>
                         </div>
+
                         <div class="pro-description border-item-bottom margin-bottom-20">
-                            <p><?php echo $productDetails['description']; ?></p>
+                            <p><?= $productDetails['description']; ?></p>
                         </div>
+
                         <div class="pro-quantity d-block d-md-flex d-lg-flex border-item-bottom ">
                             <div class="pro-action ms-0 margin-bottom-20">
-                                <?php
-                                if (intval($productDetails['quantity']) <= 0) {
-                                ?>
-                                    <button class="btn" type="button" style="pointer-events:none; background-color:#d4af37; border-color:#d4af37;">
+                                <?php if (intval($productDetails['quantity']) <= 0) { ?>
+                                    <button class="btn" style="pointer-events:none; background-color:#d4af37; border-color:#d4af37;">
                                         Hết hàng
                                     </button>
                                 <?php } else { ?>
-                                    <button class="btn btn-primary" type="button" name="add_product_to_cart">
+                                    <button class="btn btn-primary" name="add_product_to_cart">
                                         <i class="fa fa-shopping-cart"></i> Mua hàng
                                     </button>
                                 <?php } ?>
                             </div>
                         </div>
+
                         <div class="top-left d-lg-flex d-md-flex d-none">
-                            <label for="" class="share">Chia sẻ: </label>
+                            <label class="share">Chia sẻ: </label>
                             <i class="fa-brands fa-facebook-f"></i>
                             <i class="fa-brands fa-pinterest"></i>
                             <i class="fa-brands fa-google"></i>
                             <i class="fa-brands fa-square-instagram"></i>
                         </div>
+
                     </div>
                 </div>
             </div>
+        </div>
 
-        </div>
+        <!-- MÔ TẢ -->
         <div class="res-tab text-center w-100">
-            <h2 class="mota border-item-bottom ">Mô tả sản phẩm</h2>
-            <p class="text-center"><?php echo $productDetails['description']; ?></p>
-            <img class="img-responsive w-100" style="object-fit: cover; object-position: center;" src="<?php echo $productDetails['thumbnail']; ?>" alt="">
+            <h2 class="mota border-item-bottom">Mô tả sản phẩm</h2>
+            <p><?= $productDetails['description']; ?></p>
+
+            <img class="img-responsive w-100" src="../<?= $productDetails['thumbnail']; ?>" alt="">
         </div>
-        <!-- Footer -->
+
         <?php include_once('footer.php'); ?>
-        <!-- End Footer -->
     </div>
 
-    <!-- Cart -->
     <?php include("./cart.php"); ?>
+
 
 </body>
 

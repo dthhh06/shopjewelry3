@@ -97,7 +97,7 @@
 
                                 <!-- Small screen -->
                                 <div class="btn-gr d-block d-md-none">
-                                    <button type="button" class="btn btn--active btn-signup" name="signup" value="signup" style="color: #fff !important;">ĐĂNG KÝ</button>
+                                    <button type="button" class="btn btn--active btn-signup" name="signup" value="signup">ĐĂNG KÝ</button>
                                     <a style="margin-left: 12px;" href="./login.php">Đăng nhập</a>
                                 </div>
                             </div>

@@ -27,7 +27,61 @@ $(document).ready(function () {
       url: "../server/models/getcategory.s.php",
       success: function (response) {
         const categoryList = JSON.parse(response);
-        const categoryListObj = $("ul.child-list-items");
+        const categoryListObj = $("ul.child-list-items");$(document).ready(function () {
+
+    // MOBILE MENU
+    $("#openMenu").click(function () {
+        $("#navMenu").toggleClass("open");
+    });
+
+    // MOBILE DROPDOWN
+    $(".dropdown").click(function (e) {
+        if (window.innerWidth < 900) {
+            e.preventDefault();
+            $(this).toggleClass("active");
+        }
+    });
+
+    // SCROLL EFFECT
+    function handleScroll() {
+        const header = document.querySelector('.main-header');
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+
+    // LOAD CATEGORY LIST
+    function renderCategoryList() {
+        $.ajax({
+            type: "GET",
+            url: "../server/models/getcategory.s.php",
+            success: function (response) {
+                const categoryList = JSON.parse(response);
+                const categoryListObj = $(".dropdown-menu");
+
+                const html = categoryList
+                    .map((item) => {
+                        return `
+                            <li>
+                                <a href="../templates/SanPham.php?category_id=${item.id}">
+                                    ${item.name}
+                                </a>
+                            </li>`;
+                    })
+                    .join("");
+
+                categoryListObj.html(html);
+            },
+        });
+    }
+
+    renderCategoryList();
+});
+
 
         const html = categoryList
           .map((item) => {

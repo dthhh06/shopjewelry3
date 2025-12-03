@@ -45,8 +45,16 @@
     </div>
 
     <div class="mb-3">
-        <label>Đổi ảnh mới</label>
+        <label>Đổi ảnh mới (1)</label>
         <input type="file" name="thumbnail" class="form-control">
+    </div>
+        <div class="mb-3">
+        <label>Đổi ảnh mới (2)</label>
+        <input type="file" name="image1" class="form-control">
+    </div>
+        <div class="mb-3">
+        <label>Đổi ảnh mới (3)</label>
+        <input type="file" name="image2" class="form-control">
     </div>
 
     <div class="mb-3">

@@ -7,13 +7,13 @@
     <title>Feedback</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../public/assets/css/config.css"> <!-- Đường dẫn tới tập tin CSS của bạn -->
-    <link rel="stylesheet" href="../public/assets/css/feedback.css"> <!-- CSS cho trang phản hồi -->
+    <link rel="stylesheet" href="../public/assets/css/config.css"> 
+    <link rel="stylesheet" href="../public/assets/css/feedback.css">
     <link rel="stylesheet" href="../public/assets/css/sanpham.css">
     <!-- JQUERY -->
-    <script src="../public/assets/libs/jquery-3.7.1.min.js"></script> <!-- Đường dẫn tới jQuery -->
+    <script src="../public/assets/libs/jquery-3.7.1.min.js"></script> 
     <!-- JavaScript -->
-    <script src="../public/js/feedback.js" type="module"></script> <!-- JavaScript cho trang phản hồi -->
+    <script src="../public/js/feedback.js" type="module"></script> 
     <script src="../public/js/cart.js" defer></script>
 </head>
 

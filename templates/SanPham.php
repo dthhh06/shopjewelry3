@@ -198,10 +198,6 @@ $stmt->close();
 
                     <div class="title-prod mb-3 mx-0">
                         <span>
-                            <!-- 
-                                    Vidu: page-1 -> 0 + 1 = 1, 9 + 0 = 9, min(9, 15) => 1-9
-                                          page-2 -> 9 + 1 = 10, 9 + 9 = 18, min(18, 15) => 10-15 
-                                 -->
                             Hiển thị
                             <?php echo $this_page_first_result + 1 . ' - ' . min($results_per_page + $this_page_first_result, $number_of_results); ?>
                             trong tổng số <?php echo $number_of_results ?> sản phẩm

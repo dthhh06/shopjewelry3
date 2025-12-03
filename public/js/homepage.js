@@ -78,7 +78,7 @@ $(document).ready(function () {
   function handleRenderNew() {
     $.ajax({
       type: "GET",
-      url: "..models/getnew.s.php",
+      url: "../models/getnew.s.php",
       success: function (response) {
         const newProductListObj = $(".new-products > .range-product");
         const newProductList = JSON.parse(response);
@@ -157,7 +157,7 @@ $(document).ready(function () {
   function handleRenderBestSellers() {
     $.ajax({
       type: "GET",
-      url: "..models/getbestsellers.s.php",
+      url: "../models/getbestsellers.s.php",
       success: function (response) {
         const bestSellersObj = $(".bestsellers > .range-product");
         const bestSellersList = JSON.parse(response);
