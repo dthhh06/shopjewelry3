@@ -1,270 +1,213 @@
-import { isEmpty, isCorrectVerifyPassword } from "./config.js";
+// public/js/customerinfo.js
+// Nếu project của bạn dùng module imports (ví dụ config.js), giữ import.
+// Nếu không, bạn có thể bỏ import dòng dưới.
+// import { isEmpty, isCorrectVerifyPassword } from "./config.js";
 
 $(document).ready(function () {
-  // Handle events
+  // Elements
   const btnGroup = $(".btns-group > .btn");
   const customerinfoContent = $(".customerinfo-content > div");
+  const ordersTbody = $(".customerinfo__orders-tbody");
+  const orderDetailsWrap = $(".customerinfo_orderdetails");
 
-  // Format vnd currency
+  // Format VND
   function formatVndPrice(price) {
-    return price.toLocaleString("it-IT", { style: "currency", currency: "VND" });
+    return Number(price).toLocaleString("it-IT", {
+      style: "currency",
+      currency: "VND",
+    });
   }
 
+  // Switch tab
   btnGroup.each(function () {
     $(this)
-      .unbind("click")
-      .click(() => {
-        // Side effects
+      .off("click")
+      .on("click", function () {
         btnGroup.removeClass("active");
         $(this).addClass("active");
 
-        const elementOfLink = $(`.${Object.keys($(this).data())[0]}`);
-        // Refresh
+        const key = Object.keys($(this).data())[0]; // ex: customerinfo__orders
+        const elementOfLink = $(`.${key}`);
+
         customerinfoContent.removeClass("d-block").addClass("d-none");
-        // Show the current page
         elementOfLink.removeClass("d-none").addClass("d-block");
+
+        // If orders tab opened, load orders
+        if ($(this).is("[data-customerinfo__orders]")) {
+          renderOrders();
+        }
       });
   });
 
-  function isValidChangePwd() {
-    const changePwdForm = $(".customerinfo__changepwd > .form-group");
-    let isValid = true;
-
-    if (changePwdForm) {
-      changePwdForm.each(function () {
-        const inputField = $(this).find("input");
-        const error = $(this).find(".error-message");
-
-        if (inputField.length && !isEmpty(inputField.val(), error)) {
-          isValid = false;
-        }
-
-        inputField.on("input", () => error.text(""));
-      });
-    }
-
-    return isValid;
-  }
-
-  function handleResetPwd() {
-    let isValid = isValidChangePwd();
-    let correctPwd = true;
-
-    const oldPwd = $("#oldpwd");
-    const oldPwdError = oldPwd.closest(".form-group").find(".error-message");
-    const newPwd = $("#newpwd");
-    const verifypwd = $("#verifypwd");
-    const verifypwdError = verifypwd.closest(".form-group").find(".error-message");
-
-    if (isValid) {
-      if (!isCorrectVerifyPassword(newPwd.val(), verifypwd.val(), verifypwdError)) {
-        correctPwd = false;
-      }
-    }
-
-    if (isValid && correctPwd) {
-      $.ajax({
-        type: "post",
-        url: "../includes/changepwd.inc.php",
-        data: { oldPwd: oldPwd.val(), newPwd: newPwd.val(), type: "changepwd" },
-        success: function (response) {
-          if (response) {
-            alert("Đổi mật khẩu thành công");
-            window.location.reload();
-          } else {
-            oldPwdError.text("Mật khẩu cũ không đúng");
-          }
-        },
-      });
+  // ------------------ Render orders list ------------------
+  async function fetchOrders() {
+    try {
+      const res = await fetch("../includes/customerorders.inc.php");
+      if (!res.ok) throw new Error("Network response was not ok");
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("fetchOrders error:", err);
+      return [];
     }
   }
 
-  $(".resetpwd-btn").unbind("click").click(handleResetPwd);
+  async function renderOrders() {
+    ordersTbody.html(`<tr><td colspan="6" class="text-center">Đang tải...</td></tr>`);
 
+    const orders = await fetchOrders();
+
+    if (!Array.isArray(orders) || orders.length === 0) {
+      ordersTbody.html(`<tr><td colspan="6" class="text-center">Bạn chưa có đơn hàng nào</td></tr>`);
+      return;
+    }
+
+    const rowsHtml = orders
+      .map((order) => {
+        const payment = order.payment_method || "";
+        const statusText =
+          payment === "momo"
+            ? `<span class="text-success fw-bold">Đã thanh toán</span>`
+            : `<span class="text-danger fw-bold">Chưa thanh toán</span>`;
+
+        return `
+          <tr class="order-row" 
+              data-orderid="${order.id}"
+              data-orderdate="${order.order_date}"
+              data-orderaddress="${escapeHtml(order.address || '')}"
+              data-ordertotal="${order.total_money}"
+              data-payment="${payment}"
+              style="cursor:pointer"
+          >
+            <td class="text-center">#${order.id}</td>
+            <td class="text-center">${order.order_date}</td>
+            <td class="text-center">${escapeHtml(order.address || "Không có")}</td>
+            <td class="text-center">${formatVndPrice(order.total_money)}</td>
+            <td class="text-center">${payment || "Không có"}</td>
+            <td class="text-center">${statusText}</td>
+          </tr>
+        `;
+      })
+      .join("");
+
+    ordersTbody.html(rowsHtml);
+
+    // attach click
+    $(".order-row").off("click").on("click", function () {
+      const $tr = $(this);
+      const value = {
+        orderid: $tr.data("orderid"),
+        orderdate: $tr.data("orderdate"),
+        orderaddress: $tr.data("orderaddress"),
+        ordertotal: $tr.data("ordertotal"),
+        payment: $tr.data("payment"),
+      };
+      handleSeeOrderDetails(value);
+    });
+  }
+
+  // ------------------ Escape HTML (prevent XSS from DB text) ------------------
+  function escapeHtml(unsafe) {
+    return String(unsafe)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // ------------------ Show order details ------------------
   function handleSeeOrderDetails(value) {
+    // call API to get details
     $.ajax({
       type: "GET",
       url: "../includes/customerorderdetails.inc.php",
-      data: { orderid: value.orderid, type: "getCustomerOrderDetails" },
+      data: {
+        type: "getCustomerOrderDetails",
+        orderid: value.orderid,
+      },
       success: function (response) {
-        const customerinfoContent = $(".customerinfo-content > div");
-        const orderDetails = $(".customerinfo_orderdetails");
-        const data = JSON.parse(response);
-        console.log(data);
+        let data;
+        try {
+          data = JSON.parse(response);
+        } catch (e) {
+          console.error("Invalid JSON from order details:", e, response);
+          orderDetailsWrap.html(`<div class="alert alert-danger">Lỗi khi tải chi tiết đơn hàng.</div>`);
+          return;
+        }
 
-        // Refresh
-        customerinfoContent.removeClass("d-block").addClass("d-none");
-        // Show the current page
-        orderDetails.removeClass("d-none").addClass("d-block");
+        // hide other sections, show detail
+        $(".customerinfo-content > div").addClass("d-none");
+        orderDetailsWrap.removeClass("d-none");
+
+        const paymentStatus = value.payment === "momo"
+          ? `<span style="color:green;font-weight:600">Đã thanh toán (MoMo)</span>`
+          : `<span style="color:red;font-weight:600">Chưa thanh toán</span>`;
 
         let html = `
-        <div class="d-flex align-items-center justify-content-between">
-          <h5>Chi tiết đơn hàng #${value.customerorderid}</h5>
-          <p>Ngày tạo: ${value.orderdate}</p>
-        </div>
-        <div>
-          <span class="me-5" style="font-size:14px">Trạng thái thanh toán: <i style="font-weight: 600; font-size: 16px; color:red">Chưa thanh toán</i></span>
-          <span style="font-size:14px">Trạng thái vận chuyển: <i style="font-weight: 600; font-size: 16px; color:red">${data[0].status == 1 ? "Đang vận chuyển" : "Đang xử lý"}</i></span>
-        </div>
-        <div class="container mt-4">
-          <div class="row">
-            <div class="col-lg-7 col-12 ps-0">
-              <p class="m-0">ĐỊA CHỈ GIAO HÀNG</p>
-              <div class="box">
-                <p>${value.fullname}</p>
-                <p>Địa chỉ: ${value.orderaddress}</p>
-                <p>Số điện thoại: ${value.phonenumber}</p>
-              </div>
-            </div>
-            <div class="col-lg-2 col-12">
-              <p class="m-0">THANH TOÁN</p>
-              <div class="box">
-                <p>Thanh toán khi giao hàng (COD)</p>
-              </div>
-            </div>
-            <div class="col-lg-3 col-12 pe-0">
-              <p class="m-0">GHI CHÚ</p>
-              <div class="box">
-                <p>${value.note}</p>
-              </div>
-            </div>
+          <button class="btn btn-outline-secondary mb-3 back-btn">← Quay lại</button>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <h5>Chi tiết đơn hàng #${value.orderid}</h5>
+            <p>Ngày tạo: ${value.orderdate}</p>
           </div>
-          <div class="row mt-4" style="padding: 14px; border-radius: 4px; border: 1px solid #ccc">
-            <table class="table productlist-table my-0">
-              <thead>
-                <tr>
-                  <th colspan="2">Sản phẩm</th>
-                  <th class="text-center">Đơn giá</th>
-                  <th class="text-center">Số lượng</th>
-                  <th class="text-center">Tổng</th>
-                </tr>
-              </thead>
-              <tbody class="productlist-tbody">
+
+          <div class="mb-2">
+            <p class="mb-1"><strong>Địa chỉ giao:</strong> ${escapeHtml(value.orderaddress || "Không có")}</p>
+            <p class="mb-1"><strong>Thanh toán:</strong> ${paymentStatus}</p>
+            <p class="mb-1"><strong>Tổng đơn:</strong> ${formatVndPrice(value.ordertotal)}</p>
+          </div>
+
+          <table class="table table-bordered">
+            <thead>
+              <tr class="text-center">
+                <th>Sản phẩm</th>
+                <th>Đơn giá</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+              </tr>
+            </thead>
+            <tbody>
         `;
 
-        html += data
-          .map((order, index) => {
-            return `
-            <tr class="border-bottom">
-            <td colspan="2">
-              <img src="${order.thumbnail}" alt="" style="width: 90px">
-              <span class="ms-2">${order.title}</span>
-            </td>
-            <td class="text-center" style="vertical-align:middle;">
-              <p class="m-0">${formatVndPrice(Number(order.orderdetail_price))}</p>
-            </td>
-            <td class="text-center" style="vertical-align:middle;">
-              <p class="m-0">${order.num}</p>
-            </td>
-            <td class="text-center" style="vertical-align:middle;">
-              <p class="m-0">${formatVndPrice(Number(order.total_money))}</p>
-            </td>
-          </tr>
-            `;
-          })
-          .join("");
+        if (!Array.isArray(data) || data.length === 0) {
+          html += `<tr><td colspan="4" class="text-center">Không có sản phẩm</td></tr>`;
+        } else {
+          html += data
+            .map((item) => {
+              // Fields expected from model: thumbnail, title, orderdetail_price, num, total_money
+              return `
+                <tr class="text-center">
+                  <td class="text-start">
+                    <img src="${escapeHtml(item.thumbnail || '')}" style="width:80px;height:80px;object-fit:cover" alt="">
+                    <span class="ms-2">${escapeHtml(item.title || '')}</span>
+                  </td>
+                  <td>${formatVndPrice(Number(item.orderdetail_price || 0))}</td>
+                  <td>${item.num || 0}</td>
+                  <td>${formatVndPrice(Number(item.total_money || 0))}</td>
+                </tr>
+              `;
+            })
+            .join("");
+        }
 
-        html += `
-                <tr>
-                  <td>
-                    <span>Khuyến mại</span>
-                  </td>
-                  <td>
-                    <span>0</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span>Phí vận chuyển</span>
-                  </td>
-                  <td>
-                    <span>40.000 VND(Giao hàng tận nơi)</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <span>Tổng tiền</span>
-                  </td>
-                  <td>${formatVndPrice(Number(value.ordertotal))}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-				</div>
-        `;
+        html += `</tbody></table>`;
 
-        orderDetails.html(html);
+        orderDetailsWrap.html(html);
+
+        // back button
+        orderDetailsWrap.find(".back-btn").off("click").on("click", function () {
+          orderDetailsWrap.addClass("d-none");
+          $(".customerinfo__orders").removeClass("d-none");
+        });
+      },
+      error: function (xhr, status, err) {
+        console.error("AJAX error:", err);
+        orderDetailsWrap.html(`<div class="alert alert-danger">Lỗi tải chi tiết đơn hàng</div>`);
       },
     });
   }
 
-  // Render customer's orders
-  async function handleRenderOrders() {
-    const tbody = $(".customerinfo__orders-tbody");
-    if (tbody) {
-      const orders = await fetchData("../includes/customerorders.inc.php");
-
-      const ordersMap = orders
-        .map((value, index) => {
-          return `
-            <tr>
-              <td class="text-center order-row" 
-                data-orderid="${value.id}" 
-                data-orderdate="${value.order_date}" 
-                data-orderaddress="${value.address}" 
-                data-ordertotal="${value.total_money}" 
-                data-orderstatus="${value.status}"
-                data-phonenumber="${value.phone_number}"
-                data-email="${value.email}"
-                data-note="${value.note}"
-                data-fullname="${value.fullname}"
-                data-customerorderid="${index}"
-                style="cursor:pointer; color:#7fcbc9!important"
-              >
-                #${index}
-              </td>
-              <td class="text-center">${value.order_date}</td>
-              <td class="text-center">${value.address}</td>
-              <td class="text-center">${formatVndPrice(Number(value.total_money))}</td>
-              <td class="text-center">${value.status == 1 ? "Đang vận chuyển" : "Đang xử lý"}</td>
-            </tr>
-          `;
-        })
-        .join("");
-
-      tbody.html(ordersMap);
-
-      // Click to see order details
-      $(".order-row")
-        .unbind("click")
-        .click(function () {
-          const orderid = $(this).data("orderid");
-          const orderdate = $(this).data("orderdate");
-          const orderaddress = $(this).data("orderaddress");
-          const ordertotal = $(this).data("ordertotal");
-          const orderstatus = $(this).data("orderstatus");
-          const phonenumber = $(this).data("phonenumber");
-          const note = $(this).data("note");
-          const fullname = $(this).data("fullname");
-          const customerorderid = $(this).data("customerorderid");
-
-          const value = { orderid, orderdate, orderaddress, ordertotal, orderstatus, phonenumber, note, fullname, customerorderid };
-
-          handleSeeOrderDetails(value);
-        });
-    }
-  }
-  handleRenderOrders();
-
-  async function fetchData(url) {
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const dataJson = await response.json();
-    console.log(dataJson);
-    return dataJson;
-  }
+  // Initially: show account info by default
+  $(".btns-group > .btn").first().trigger("click");
 });

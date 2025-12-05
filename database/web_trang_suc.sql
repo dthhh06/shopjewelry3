@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th12 01, 2025 lúc 02:26 PM
+-- Thời gian đã tạo: Th12 05, 2025 lúc 07:38 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -40,7 +40,7 @@ CREATE TABLE `category` (
 INSERT INTO `category` (`id`, `name`, `isDeleted`) VALUES
 (1, 'Nhẫn', 0),
 (2, 'Vòng Cổ', 0),
-(3, 'Trâm Cài', 0),
+(3, 'Trâm Cài', 1),
 (4, 'Bông tai', 0),
 (5, 'Vòng tay', 0);
 
@@ -101,18 +101,7 @@ CREATE TABLE `gallery` (
 --
 
 INSERT INTO `gallery` (`id`, `title`, `thumbnail`) VALUES
-(1, 'Dây chuyền bạc ba mặt tròn đính đá', '../assets/imgs/Dây Chuyền Bạc  Ba Mặt Tròn Đính Đá.png'),
-(2, 'Dây chuyền bạc đính ngọc trai', '../assets/imgs/Dây Chuyền Bạc  Đính Ngọc Trai.png'),
-(3, 'Dây chuyền bạc mạ vàng hồng 14k mặt hình chữ 0', '../assets/imgs/Dây Chuyền Bạc  Mạ Vàng Hồng 14k Mặt Hình Chữ O.png'),
-(4, 'Dây chuyền bạc mặt trái tiêm nhiều màu', '../assets/imgs/Dây Chuyền Bạc  Mặt Trái Tim Nhiều Màu.png'),
-(5, 'Dây chuyền bạc vô cực', '../assets/imgs/Dây Chuyền Bạc  Vô Cực.png'),
-(6, 'Dây chuyền bạc Disney x mặt dây xe bí ngô', '../assets/imgs/Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô.png'),
 (7, 'Dây chuyền bạc Game Of Thrones x mặt hình rồng đính đá pha lê đỏ', '../assets/imgs/Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ.png'),
-(8, 'Dây chuyền bạc mạ vàng 14k chuỗi đính ngọc trai', '../assets/imgs/Dây Chuyền Bạc Mạ Vàng 14K Chuỗi Đính Ngọc Trai.png'),
-(9, 'Dây chuyền bạc mạ vàng 14k mặt bông hoa đính đá', '../assets/imgs/Dây Chuyền Bạc Mạ Vàng 14k Mặt Bông Hoa Đính Đá.png'),
-(10, 'Dây chuyền bạc mạ vàng 14k mặt tròn đính đá', '../assets/imgs/Dây Chuyền Bạc Mạ Vàng 14k Mặt Tròn Đính Đá.png'),
-(11, 'Nhẫn gắn kim cương cao cấp', '../assets/imgs/Nhẫn gắn kim cương cao cấp.png'),
-(12, 'Nhẫn ngọc trai cao cấp', '../assets/imgs/Nhẫn ngọc trai cao cấp.png'),
 (13, 'Nhẫn tình yêu', '../assets/imgs/Nhẫn tình yêu.png'),
 (14, 'Nhẫn vàng cao cấp', '../assets/imgs/Nhẫn vàng cao cấp.png'),
 (15, 'Nhẫn vòng ADV', '../assets/imgs/Nhẫn vòng ADV.png');
@@ -217,6 +206,55 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `momo_payments`
+--
+
+CREATE TABLE `momo_payments` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `request_id` varchar(50) NOT NULL,
+  `order_info` varchar(255) DEFAULT NULL,
+  `order_type` varchar(50) DEFAULT NULL,
+  `trans_id` varchar(50) DEFAULT NULL,
+  `pay_url` text DEFAULT NULL,
+  `result_code` int(11) DEFAULT NULL,
+  `message` varchar(255) DEFAULT NULL,
+  `signature` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `momo_payments`
+--
+
+INSERT INTO `momo_payments` (`id`, `order_id`, `amount`, `request_id`, `order_info`, `order_type`, `trans_id`, `pay_url`, `result_code`, `message`, `signature`, `created_at`) VALUES
+(1, 1764787713, 47540000, '1764787713', 'Thanh toán MoMo ATM', 'paid', '4622711413', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0Nzg3NzEz&s=28f936df797f4c464d3f7ddb3f5cd97867b1735ab11999477cf120cd93b25e9f', 0, 'Successful.', '1d401dabc991722d18cc95c160ce21ea021e7435de0908e2913cad2fb706305d', '2025-12-03 18:48:34'),
+(2, 1764788267, 47540000, '1764788267', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0Nzg4MjY3&s=ace28ea0e0b268c23d5fb82d448cc64a08f2f41abdbd473edaaf58723b92eab0', NULL, NULL, '1d24da3dfe5427e931936f75cc9aea3e344f8ff01395e7308afc6985114cc1bc', '2025-12-03 18:57:48'),
+(3, 1764788268, 47540000, '1764788268', 'Thanh toán MoMo ATM', 'paid', '4622712530', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0Nzg4MjY4&s=59e2adf657a9a6980c21c93bf5d91d1389a037487c40110a1e94f2d44b2ff661', 0, 'Successful.', '5ac6fc2f181b6c91778f9edddf5dda77e0d5d668059260f13e707d73f3f2b285', '2025-12-03 18:57:49'),
+(4, 1764826625, 47540000, '1764826625', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODI2NjI1&s=c1a93a806d080be997b0cb673d4fe03e1af756397c6e0624725b457f3c28a2ea', NULL, NULL, '6ec89fc34eb35075a8fb817daf8b25db0cdc82ad5c02156a3b4c04d96f053d5e', '2025-12-04 05:37:07'),
+(5, 1764836608, 95040000, '1764836608', 'Thanh toán MoMo ATM', 'atm', NULL, NULL, NULL, NULL, '8ae62744bf354ca53ebd0b0247e2982ac41488066717cdb1a69f9f24c94452fa', '2025-12-04 08:23:29'),
+(6, 1764836640, 95040000, '1764836640', 'Thanh toán MoMo ATM', 'atm', NULL, NULL, NULL, NULL, '0caea44889d9d9c1b77f066f7f13cb5a4308de824fc2caaf22d0e2840cecc9db', '2025-12-04 08:24:01'),
+(7, 1764836694, 47540000, '1764836694', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODM2Njk0&s=98f64fd72410b913e707d0da7ed783815c53c6008187e76a81a62ef2882664dc', NULL, NULL, '6b6bca49713e1f155791695ec8da5e5ae351828742bcda400858bc7a9a5434f0', '2025-12-04 08:24:55'),
+(8, 1764836695, 47540000, '1764836695', 'Thanh toán MoMo ATM', 'failed', '1764836720109', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODM2Njk1&s=8c3fd30b04f2101b5c0d10c4d20bb43ceb1232bc5db288cc5486a9df325404e0', 1006, 'Giao dịch bị từ chối bởi người dùng.', '458dc6ec7c39220a3047066dafb7c0f6fac021b2c40dc154c473522f22170ea7', '2025-12-04 08:24:55'),
+(9, 1764850074, 47540000, '1764850074', 'Thanh toán MoMo ATM', 'paid', '4623090568', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODUwMDc0&s=92435c325dd70e9d6965dface1a80e9659075301ba7c66188d80feb2385c5e21', 0, 'Successful.', 'e647c390ce50162ae17a87072ee6228ca18ddff1f6c316c862154bfa07d0c603', '2025-12-04 12:07:55'),
+(10, 1764898913, 47540000, '1764898913', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk4OTEz&s=4341a45c722871114719d49c4df68ceb73bc7968a0d8ba5fd66c38e0b74ee0b4', NULL, NULL, '18aa1b4d7462696733cba459c4f77a37a4fb973d7a178531bb289c9448bcf187', '2025-12-05 01:41:54'),
+(11, 1764898914, 47540000, '1764898914', 'Thanh toán MoMo ATM', 'paid', '4623132594', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk4OTE0&s=c12f944c00a93885bdc3d12838c2bad7d3c175d2d1ca6d0bf3c31f5a0a030bb6', 0, 'Successful.', 'd5a03fec2094a616ca1a18ce8bffb43b20dae7030570a03be171a2129ee1f0c6', '2025-12-05 01:41:54'),
+(12, 1764899319, 47540000, '1764899319', 'Thanh toán MoMo ATM', 'paid', '4623132707', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk5MzE5&s=abf8b3d2da79942e55f2a784df4c70deec62689557a00f4f6dc899113b9c9e6f', 0, 'Successful.', 'f8b346940457a05e09daf9c13297c823fffa07bf63292516e14e1ba983d7de3b', '2025-12-05 01:48:39'),
+(13, 1764899697, 47540000, '1764899697', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk5Njk3&s=56ac5148ef561557bbb53aaff33bd2104ba12c09f7ad35f6a8856d2c387f94b1', NULL, NULL, 'a453357484fcc3cd127c0da637c4c1db1bcf2f1d23e6b002ea871f4f3039fae2', '2025-12-05 01:54:58'),
+(14, 1764899698, 47540000, '1764899698', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk5Njk4&s=c36de1c0652bbb23d0239d7b6191469c37c0833877aa711ff133f4dfa6a7aa01', NULL, NULL, '0609ac0e2fdd28b29501b4bfaa91346a00da1a5c83b879b205b8522d64528ad1', '2025-12-05 01:54:58'),
+(15, 1764899808, 47540000, '1764899808', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk5ODA4&s=9251af2b2cf42ebe9861bbcd3c6a90d0bbca32b551883085ed12c7178883c557', NULL, NULL, '107447d4ea6b02158362afa3291c415f6fab7f66d18561b416bbcc33ce17f846', '2025-12-05 01:56:49'),
+(16, 1764899809, 47540000, '1764899809', 'Thanh toán MoMo ATM', 'failed', '1764900186746', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0ODk5ODA5&s=263f4b0a136157c93e8bf41cd82c36fed01a9ea70495a5b794019ee2e3fece4a', 1006, 'Giao dịch bị từ chối bởi người dùng.', '8a3bcc96e2e9f33370500c48cb244a52131603cea8f1e32b993232d6badd585b', '2025-12-05 01:56:50'),
+(17, 1764900230, 47540000, '1764900230', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTAwMjMw&s=f3d7956afb043bc91823dfb68ae70172c44ec7c77b60de51b76f511c6e40a80e', NULL, NULL, '33b226e3bf9bfa39035315a55cf1a062d5c2b7acf47fdddecfd7b0e367ad8b14', '2025-12-05 02:03:51'),
+(18, 1764900231, 47540000, '1764900231', 'Thanh toán MoMo ATM', 'paid', '4623123525', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTAwMjMx&s=7606cd7b1c7c0b05233d105d22ab9b9e78073a9c9680fee6e071aaeb970387d8', 0, 'Successful.', '9e3a9529a6cc9e7a080959c8c36abae45123b25113e509e9831934c7cba4266a', '2025-12-05 02:03:52'),
+(19, 1764900925, 45165000, '1764900925', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTAwOTI1&s=6fa63661f6c02cb921174a0a338185fc7824d915608ea0155dcb4b7af2de2926', NULL, NULL, '0657223d2b00fe782e42e92298be8485fdc18c7f0991e9b5cf04db0ae1b27d0b', '2025-12-05 02:15:26'),
+(20, 1764900926, 45165000, '1764900926', 'Thanh toán MoMo ATM', 'paid', '4623113969', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTAwOTI2&s=8a2f1e84546c5919450f42bf5f6c8adc0b9761c831c91e51a8d1431a851d1b9a', 0, 'Successful.', '6f94131d35373e6cba0c8469411b365f3d0e338244ece4adc0b831732f35388f', '2025-12-05 02:15:27'),
+(21, 1764911925, 42908750, '1764911925', 'Thanh toán MoMo ATM', 'paid', '4623232458', 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTExOTI1&s=1172a6f8f938dfa73405424a051fed334b5ab1f3c8a6000c339a749b1ed3467d', 0, 'Successful.', '3eb38bcc431ab5c2bb577f30181a12c3dc7cd1ae8f50357dfcb1bb10b9078443', '2025-12-05 05:18:46'),
+(22, 1764911926, 42908750, '1764911926', 'Thanh toán MoMo ATM', 'atm', NULL, 'https://test-payment.momo.vn/v2/gateway/pay?t=TU9NT3wxNzY0OTExOTI2&s=4c9496d15d44f44e1da26439d6040d7fb3ec103d484f2ee972f9cf28c0d2bd84', NULL, NULL, '4ab8dd377d6e4350cb0e0d6659595abe08f821614ed4300ee8b115adf9ef21b1', '2025-12-05 05:18:47');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `order`
 --
 
@@ -231,6 +269,8 @@ CREATE TABLE `order` (
   `status` int(11) DEFAULT NULL,
   `total_money` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `payment_method` varchar(20) DEFAULT NULL,
+  `trans_id` varchar(50) DEFAULT NULL,
   `isDeleted` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -238,13 +278,34 @@ CREATE TABLE `order` (
 -- Đang đổ dữ liệu cho bảng `order`
 --
 
-INSERT INTO `order` (`id`, `fullname`, `email`, `phone_number`, `address`, `note`, `order_date`, `status`, `total_money`, `user_id`, `isDeleted`) VALUES
-(1, 'Diệu Thảo', 'dieuthao1809206@gmail.com', '0347367621', 'Lê Văn Hiến, Đà Nẵng', 'Che tên sản phẩm', '2025-11-20', 0, 670000, 1, 0),
-(2, 'Mỹ Linh', 'mylinh1234@gmail.com', '0999999999', 'Hoà Nhơn, Đà Nẵng', 'Đóng gói sản phẩm cẩn thận', '2025-11-20', 0, 4400000, 2, 0),
-(3, 'Cẩm Hà', 'camha@gmail.com', '0888888888', 'Thượng Đức, Đà Nẵng', 'Vận chuyển cẩn thận', '2025-11-20', 0, 2518000, 3, 0),
-(4, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', 'Hòa Khánh, Đà Nẵng', 'Che tên sản phẩm', '2025-11-20', 0, 10785000, 4, 0),
-(5, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 , Lê Văn Hiến, Việt Nam', 'Đóng gói cẩn thận', '2025-11-30', 0, NULL, 4, 0),
-(6, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 , Lê Văn Hiến, Việt Nam', 'ok', '2025-12-01', 0, 1570900, 4, 0);
+INSERT INTO `order` (`id`, `fullname`, `email`, `phone_number`, `address`, `note`, `order_date`, `status`, `total_money`, `user_id`, `payment_method`, `trans_id`, `isDeleted`) VALUES
+(1, 'Diệu Thảo', 'dieuthao1809206@gmail.com', '0347367621', 'Lê Văn Hiến, Đà Nẵng', 'Che tên sản phẩm', '2025-11-20', 0, 670000, 1, NULL, NULL, 0),
+(2, 'Mỹ Linh', 'mylinh1234@gmail.com', '0999999999', 'Hoà Nhơn, Đà Nẵng', 'Đóng gói sản phẩm cẩn thận', '2025-11-20', 0, 4400000, 2, NULL, NULL, 0),
+(3, 'Cẩm Hà', 'camha@gmail.com', '0888888888', 'Thượng Đức, Đà Nẵng', 'Vận chuyển cẩn thận', '2025-11-20', 0, 2518000, 3, NULL, NULL, 0),
+(4, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', 'Hòa Khánh, Đà Nẵng', 'Che tên sản phẩm', '2025-11-20', 0, 10785000, 4, NULL, NULL, 0),
+(5, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 , Lê Văn Hiến, Việt Nam', 'Đóng gói cẩn thận', '2025-11-30', 0, NULL, 4, NULL, NULL, 0),
+(6, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 , Lê Văn Hiến, Việt Nam', 'ok', '2025-12-01', 0, 1570900, 4, NULL, NULL, 0),
+(7, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 Lê Văn Hiến, Levanhien, Việt Nam', 'okk', '2025-12-03', 0, 475040000, 4, NULL, NULL, 1),
+(8, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', 'Đà Nẵng, Lê Văn Hiến, 420/30 ', 'okkkk', '2025-12-03', 0, 95040000, 4, NULL, NULL, 0),
+(9, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', 'Đà Nẵng, Lê Văn Hiến, 420/30 ', 'okkkk', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(10, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'okkkk', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(11, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaa', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(12, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaa', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(13, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30', 'aaaaaaaaa', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(14, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30', 'aaaaaaaaa', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(15, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'okkkkkk', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(16, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'okkkkkk', '2025-12-03', 0, 95040000, 4, NULL, NULL, 1),
+(17, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaaaaaa', '2025-12-03', 0, 47540000, 4, NULL, NULL, 1),
+(18, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaaaaaa', '2025-12-03', 0, 47540000, 4, NULL, NULL, 1),
+(19, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaaaaaa', '2025-12-03', 0, 47540000, 4, NULL, NULL, 1),
+(20, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaaaaaa', '2025-12-03', 0, 47540000, 4, NULL, NULL, 1),
+(21, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '420/30 ', 'aaaaaaaa', '2025-12-03', 0, 47540000, 4, NULL, NULL, 1),
+(22, 'dth', 'thao@gmail.com', '0987654321', '420/30 Lê Văn Hiến', 'aaaaaaaaa', '2025-12-03', 0, 31400000, 5, NULL, NULL, 0),
+(23, 'dth', 'thao@gmail.com', '0987654321', '420/30 Lê Văn Hiến', 'aaaaaaaaa', '2025-12-03', 0, 31400000, 5, NULL, NULL, 0),
+(24, 'dth', 'thao@gmail.com', '0987654321', '', '', '2025-12-05', 0, 47540000, 5, 'momo', '4623123525', 0),
+(25, 'dth', 'thao@gmail.com', '0987654321', '420/30 Lê Văn Hiến, Levanhien, Việt Nam', 'aaaa', '2025-12-05', 0, 95040000, 5, 'cod', NULL, 0),
+(26, 'dth', 'thao@gmail.com', '0987654321', '', '', '2025-12-05', 0, 45165000, 5, 'momo', '4623113969', 0),
+(27, 'dth', 'thao@gmail.com', '0987654321', '420/30 Lê Văn Hiến, Levanhien, Việt Nam', 'ccc', '2025-12-05', 0, 42908750, 5, 'momo', '4623232458', 0);
 
 --
 -- Bẫy `order`
@@ -293,7 +354,28 @@ INSERT INTO `orderdetail` (`id`, `order_id`, `product_id`, `price`, `num`, `tota
 (9, 2, 10, 870000, 1, 870000),
 (10, 2, 6, 720000, 3, 2160000),
 (11, 5, 2, 631750, 2, NULL),
-(12, 6, 4, 510300, 3, 1530900);
+(12, 6, 4, 510300, 3, 1530900),
+(13, 7, 6, 475000000, 1, 475000000),
+(14, 8, 7, 47500000, 2, 95000000),
+(15, 9, 7, 45125000, 2, 95000000),
+(16, 10, 7, 42868750, 2, 95000000),
+(17, 11, 7, 40725313, 2, 95000000),
+(18, 12, 7, 38689047, 2, 95000000),
+(19, 13, 7, 36754595, 2, 95000000),
+(20, 14, 7, 34916865, 2, 95000000),
+(21, 15, 7, 33171022, 2, 95000000),
+(22, 16, 7, 31512471, 2, 95000000),
+(23, 17, 7, 29936847, 1, 47500000),
+(24, 18, 7, 28440005, 1, 47500000),
+(25, 19, 7, 27018005, 1, 47500000),
+(26, 20, 7, 27018005, 1, 47500000),
+(27, 21, 7, 27018005, 1, 47500000),
+(28, 22, 12, 31360000, 1, 31360000),
+(29, 23, 12, 30732800, 1, 31360000),
+(30, 24, 2, 47500000, 1, 47500000),
+(31, 25, 3, 95000000, 1, 95000000),
+(32, 26, 2, 45125000, 1, 45125000),
+(33, 27, 2, 42868750, 1, 42868750);
 
 --
 -- Bẫy `orderdetail`
@@ -412,31 +494,26 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `title`, `price`, `category_id`, `discount`, `thumbnail`, `image1`, `image2`, `description`, `quantity`, `created_at`, `updated_at`, `deleted`, `isShow`, `isOutstanding`, `isNew`) VALUES
-(1, 'Bông tai cao cấp Biz', 315000, 4, 10, '../assets/imgs/img1.png', NULL, NULL, 'Sản phẩm này rất đẹp', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(2, 'Nhẫn vòng ADV', 600163, 1, 5, '../assets/imgs/Nhẫn vòng ADV.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 8, '2025-11-20', '2025-11-30', 0, 1, 1, 1),
-(3, 'Nhẫn vàng cao cấp', 460952, 1, 13, '../assets/imgs/Nhẫn vàng cao cấp.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 135, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
-(4, 'Nhẫn hồng khắc tê', 459270, 1, 10, '../assets/imgs/Nhẫn hồng khắc tê.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 87, '2025-11-20', '2025-12-01', 0, 1, 1, 1),
-(5, 'Nhẫn tình yêu', 644000, 1, 8, '../assets/imgs/Nhẫn tình yêu.png', NULL, NULL, 'Sản phẩm hot nhất hiện nay', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(6, 'Trâm Cài Tóc Bằng Gỗ Cao Cấp', 648000, 3, 10, '../assets/imgs/Trâm Cài Tóc Bằng Gỗ Cao Cấp.png', NULL, NULL, 'Sản phẩm tốt nhất cho người giàu', 200, '2025-11-20', '2025-11-20', 0, 1, 1, 1),
-(7, 'Dây chuyền bạc Moments mạ vàng 14K vô cực', 540000, 2, 10, '../assets/imgs/Dây Chuyền Bạc Moments Mạ Vàng 14K Vô Cực.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(8, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(9, 'Nhẫn Bạc Moments Vương Miện Đính Đá', 750000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Vương Miện Đính Đá.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(10, 'Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao', 870000, 2, 0, '../assets/imgs/Nhẫn Bạc Mặt Đính Đá Hình Ngôi Sao.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(11, 'Dây chuyền bạc mặt trái tim', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Mặt Trái Tim.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(12, 'Trâm Cài Tóc Hoa Mai Trắng', 320000, 3, 0, '../assets/imgs/Trâm Cài Tóc Hoa Mai Trắng.png', NULL, NULL, 'Đây là một Trâm Cài Tóc Đơn Giản', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(13, 'Trâm Cài Tóc Ngọc Bích Đơn Giản', 576000, 3, 10, '../assets/imgs/Trâm Cài Tóc Ngọc Bích Đơn GIẢN.png', NULL, NULL, 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(14, 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc', 999999, 3, 0, '../assets/imgs/Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc.png', NULL, NULL, 'Trâm Phượng Hoàng Cổ Thi tua rua đèn lồng gắn ngọc là sản phẩm được làm thủ công chất liệu bạc ta 99\r\n\r\n* Thông tin chi tiết về sản phẩm\r\n\r\n– Chất liệu : bạc 99\r\n\r\n– Kích thước : dài 17cm\r\n\r\n– Trọng lượng : ~ 45garm', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(15, 'Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá', 800000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Chuỗi Đá.png', NULL, NULL, 'Tôn lên khuôn mặt của bạn với Bông Tai Thả Tám Viên Đá Lấp Lánh của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai này có một hàng gồm 8 viên đá cubic zirconia trong suốt, treo nhẹ nhàng theo cặp. Thiết kế độc đáo này cho phép phối phong cách linh hoạt, trong khi nút tai hình trái tim đảm bảo sự vững chắc. Thể hiện bản thân với cặp bông tai nhẹ nhàng, lấp lánh này - hoàn hảo để thêm một chút sang trọng cho bất kỳ dịp nào. Được bán theo cặp, những chiếc bông tai thả bạc sterling này là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(16, 'Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai', 700000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Rơi Đính Ngọc Trai.png', NULL, NULL, 'Biến sự thanh lịch thành khẩu hiệu của bạn với Bông Tai Hạt Nước Ngọt được Xử Lý của chúng tôi. Chế tác từ bạc sterling, những chiếc bông tai thả này có một dãy bốn hạt nước ngọt được xử lý trên mỗi chiếc. Hình mô tả chuỗi kết nối từng viên ngọc, tạo ra một trò chơi chiều sâu độc đáo. Có ý đồ khác nhau về kích thước, những viên ngọc này tượng trưng cho vẻ đẹp, tình yêu và sự khôn ngoan. Hoàn hảo kết hợp với nút tai hình trái tim, những chiếc bông tai này là một bổ sung cổ điển cho bộ sưu tập tra', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(17, 'Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh', 900000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh.png', NULL, NULL, 'Diễn đạt sâu sắc tình yêu của bạn với Hoa Tai Bạc Timeless Dạng Vòng Đính Đá Pha Lê Xanh. Những chiếc bông tai bạc  thanh lịch này mỗi chiếc đều có một viên đá Pha lê Xanh hình Chữ Nhật lấp lánh ở trung tâm tạo nên một diện mạo hiện đại và cao cấp.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(18, 'Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Đính Ngọc Trai Cỡ Lớn.png', NULL, NULL, 'Giữ cho nó cổ điển với Bông Tai Cài Ngọc Nước Ngọt 7mm bằng bạc sterling này. Những viên ngọc lấp lánh có kích thước 7mm, được đặt một cách tinh tế, thể hiện sự thanh lịch vĩnh cửu. Được đảm bảo bằng nút tai hình trái tim, cặp bông tai này vừa cổ điển vừa hiện đại. Là một sự bổ sung hoàn hảo cho bộ sưu tập bông tai của bạn, những chiếc bông tai cài ngọc này tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu được tượng trưng bởi ngọc nước ngọt được xử lý. Lưu ý rằng mỗi viên ngọc nước ngọt được xử lý là ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(19, 'Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai', 600000, 4, 0, '../assets/imgs/Hoa Tai Bạc Timeless Vòng Đá Phối Ngọc Trai.png', NULL, NULL, 'Kết hợp sự thanh lịch và hiện đại với Bông Tai Cài Ngọc Nước Ngọt & Vòng Tròn Lấp Lánh bằng bạc sterling của chúng tôi. Thiết kế độc đáo với một viên ngọc lấp lánh được đặt trong một vòng tròn lấp lánh bằng cubic zirconia trong suốt. Viên ngọc lệch tâm tạo nên một chút không đối xứng, được bổ sung bởi nút tai hình trái tim. Được bán theo cặp, những chiếc bông tai này kết hợp giữa ngọc truyền thống với thiết kế hiện đại, tôn vinh vẻ đẹp, sự khôn ngoan và tình yêu. Lưu ý rằng mỗi viên ngọc nước ng', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(20, 'Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Disney x Mặt Dây Xe Bí Ngô.png', NULL, NULL, 'Theo đuổi lời kêu gọi của chiếc bóng với Dây Chuyền Disney Cinderella Carriage Collier từ bộ sưu tập Disney x Pandora. Chiếc dây chuyền bạc sterling này có một mặt nạ tinh tế được lấy cảm hứng từ chiếc xe bí ngô phù thủy của Cinderella, với một viên đá hình lá cẩm màu xanh được bao quanh bởi các chi tiết mở xoắn. Những viên đá cubic zirconia nhỏ lấp lánh trên bánh xe và thân bí ngô. Mặt nạ được cố định trên dây chuyền và có thể điều chỉnh được thành ba chiều dài. Kết hợp nó với đôi bông tai nút ', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(21, 'Hoa Tai Bạc Disney x Xe Bí Ngô', 600000, 2, 0, '../assets/imgs/Hoa Tai Bạc Disney x Xe Bí Ngô.png', NULL, NULL, '', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(22, 'Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương', 600000, 1, 0, '../assets/imgs/Nhẫn Bạc Moments Đá Tháng Sinh Tháng 9 Pha Lê Xanh Dương.png', NULL, NULL, 'Đeo một biểu tượng của sự vĩnh cửu với Nhẫn Blue Eternity Circle. Chiếc nhẫn bạc sterling này có một viên đá pha lê màu xanh lấp lánh được đặt bằng móng vuốt. Dải nhẫn bóng mịn xoay quanh viên đá trung tâm trong một mô hình vô cùng mở rộng. Cho dù bạn muốn mang theo một lời nhắc về tình yêu vĩnh cửu hay một biểu tượng của niềm vui vô tận trải qua từng khoảnh khắc, chiếc nhẫn vô cùng màu sắc này sẽ mang đến ý nghĩa lấp lánh cho diện mạo của bạn.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(23, 'Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ', 600000, 2, 0, '../assets/imgs/Dây Chuyền Bạc Game Of Thrones x Mặt Hình Rồng Đính Pha Lê Đỏ.png', NULL, NULL, 'Đối mặt với các yếu tố với Dây Chuyền Dây Nhà Rồng trong trò chơi Ngôi Nhà của Rồng. Được làm từ bạc Sterling, dây chuyền có độ dài có thể điều chỉnh này có một mặt dây chuyền biểu thị một con rồng trong trò chơi Ngôi Nhà của Rồng nằm cuộn tròn với cánh rộng và đuôi vòng quanh một viên đá nhân tạo màu đỏ. Một viên đá màu đỏ khác lấp lánh từ đầu của dây chuyền mặt dây chuyền. Đeo chiếc mặt dây chuyền này như một biểu tượng cho những bí ẩn vĩ đại và mạnh mẽ của thế giới - cả trong hư cấu và thực t', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(24, 'Nhẫn Bạc Timeless Lượn Sóng', 600000, 2, 0, '../assets/imgs/Nhẫn Bạc Timeless Lượn Sóng.png', NULL, NULL, 'Được chế tác từ bạc sterling, chiếc Nhẫn Polished Wave của chúng tôi uốn cong để giống như sự chuyển động của một đợt sóng, với bề mặt được đánh bóng mịn. Xếp chồng nhiều chiếc nhẫn bạc sterling cùng nhau hoặc kết hợp với phiên bản pavé trong các gam màu kim loại khác nhau để tạo nên một diện mạo đương đại mà bạn sẽ yêu thích suốt nhiều năm tới.', 0, '2025-11-20', NULL, 0, 1, 1, 1),
-(29, 'Vòng tay Dior', 14406000, 5, 2, '../assets/imgs/1764581142_lactaydior.jpg', '../assets/imgs/1764581142_1_lactaydior1.jpg', '../assets/imgs/1764581142_2_lactaydior2.jpg', 'Lắc tay xinh xinh', 10, '2025-12-01', '2025-12-01', 0, 1, 1, 1);
+(1, 'Bông tai cao cấp Biz', 229635, 4, 10, '../assets/imgs/1764691895_bt3.1.jpg', '../assets/imgs/1764691895_1_bt3.2.jpg', '../assets/imgs/1764691895_2_bt3.jpg', 'Sản phẩm này rất đẹp', 0, '2025-11-20', '2025-12-02', 0, 1, 1, 1),
+(2, ' Bông tai ngọc trai', 40725313, 4, 5, '../assets/imgs/1764694240_bt1.2.jpg', '../assets/imgs/1764694240_1_bt1.3.jpg', '../assets/imgs/1764694240_2_bt1.jpg', 'Sản phẩm hot nhất hiện nay', 5, '2025-11-20', '2025-12-05', 0, 1, 1, 1),
+(3, 'Bông tai Louis Vuitton', 90250000, 4, 5, '../assets/imgs/1764694303_btLV.jpg', '../assets/imgs/1764694303_1_btLV1.jpg', '../assets/imgs/1764694303_2_btLV2.jpg', 'Sản phẩm hot nhất hiện nay', 49, '2025-11-20', '2025-12-05', 0, 1, 1, 1),
+(4, 'Dây chuyền Cartier', 67900000, 2, 3, '../assets/imgs/1764694359_Dc_cartier.jpg', '../assets/imgs/1764694359_1_Dc_cartier1.jpg', '../assets/imgs/1764694359_2_Dc_cartier2.jpg', 'Sản phẩm hot nhất hiện nay', 50, '2025-11-20', '2025-12-02', 0, 1, 1, 1),
+(5, 'Dây chuyền ngọc trai', 114000000, 2, 5, '../assets/imgs/1764694403_DCngoctrai.jpg', '../assets/imgs/1764694403_1_dcngoctrai.webp', '../assets/imgs/1764694403_2_dcngoctrai1.jpg', 'Sản phẩm hot nhất hiện nay', 50, '2025-11-20', '2025-12-02', 0, 1, 1, 1),
+(6, 'Dây chuyền Tiffany & ', 451250000, 2, 5, '../assets/imgs/1764694560_dctiffanico.jpg', '../assets/imgs/1764694560_1_dctiffanico1.jpg', '../assets/imgs/1764694560_2_dctiffanico2.jpg', 'Dây chuyền thiết kế tinh xảo đến từ nhà model Tiffany & Co', 49, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(7, 'Lắc tay vàng', 25667105, 5, 5, '../assets/imgs/1764694825_lt2.3.jpg', '', '', 'Một chiếc lắc tay basic', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(8, 'Lắc tay cỏ 4 lá ', 60000000, 5, 0, '../assets/imgs/1764694892_lt3..jpg', '../assets/imgs/1764694892_1_lt3.2.jpg', '../assets/imgs/1764694892_2_lt3.jpg', 'Lắc tay cỏ 4 lá', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(9, 'Lắc tay vàng khắc tên', 98000000, 5, 2, '../assets/imgs/1764694948_lt4.1.webp', '../assets/imgs/1764694948_1_lt4.2.webp', '../assets/imgs/1764694948_2_lt4.webp', 'Lắc tay khắc tên', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(10, 'Lắc tay đồng xu', 82650000, 5, 5, '../assets/imgs/1764695041_lt5.1.webp', '../assets/imgs/1764695041_1_lt5.2.webp', '../assets/imgs/1764695041_2_lt5.webp', 'Một thiết kế tinh xảo ', 10, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(11, 'Lắc tay Cartier', 60000000, 5, 0, '../assets/imgs/1764695172_lt7.1.jpg', '../assets/imgs/1764695172_1_lt7.2.jpg', '../assets/imgs/1764695172_2_lt7.jpg', 'Thiết kế xa xỉ đến từ Cartier', 10, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(12, 'Dây chuyền mặt trăng', 30118144, 2, 2, '../assets/imgs/1764695108_lt6.1.webp', '../assets/imgs/1764695108_1_lt6.webp', '../assets/imgs/1764695108_2_lt62.webp', 'Thiết kế nhỏ nhỏ xinh xinh', 18, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(13, 'Dây chuyền ba sợi', 45000000, 2, 10, '../assets/imgs/1764695978_vc1.2.jpg', '../assets/imgs/1764695978_1_vc1.3.jpg', '../assets/imgs/1764695978_2_vc1.jpg', 'Đây là một sợi dây chuyền có giá trị cao', 0, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(14, 'Lắc tay đính kim cương', 686000000, 5, 2, '../assets/imgs/1764695282_lt8.jpg', '../assets/imgs/1764695282_1_lt8.1.jpg', '../assets/imgs/1764695282_2_lt8.3.jpg', 'Lắc tay full kim cương biểu tượng của sự xa xỉ', 5, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(15, 'Nhẫn vàng đính kim cương', 490000000, 1, 2, '../assets/imgs/1764695353_n2.1.jpg', '../assets/imgs/1764695353_1_n2.2.jpg', '../assets/imgs/1764695353_2_N2.jpg', 'Nhẫn vàng kiểu đính kim cương ở giữa làm điểm nhấn ', 5, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(16, 'Nhẫn kim cương kiểu', 70000000, 1, 0, '../assets/imgs/1764695445_n3.1.jpg', '../assets/imgs/1764695445_1_n3.2.jpg', '../assets/imgs/1764695445_2_N3.jpg', 'Nhẫn kim cương với thiết kế uốn lượn tinh xảo', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(17, 'Nhẫn chiếc lá', 90000000, 1, 0, '../assets/imgs/1764695524_n4.2.jpg', '../assets/imgs/1764695524_1_n4.3.jpg', '../assets/imgs/1764695524_2_n4.jpg', 'Thiết kế tạo điểm nhấn bởi những chiếc lá', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(18, 'Nhẫn vàng Ý', 60000000, 1, 0, '../assets/imgs/1764695595_nhan2.jpg', '../assets/imgs/1764695595_1_nhan2.2.jpg', '../assets/imgs/1764695595_2_N2.jpg', 'Nhẫn kiểu ', 20, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(19, 'Dây chuyền kim cương Dior', 1000000000, 2, 0, '../assets/imgs/1764695668_vc3.webp', '../assets/imgs/1764695668_1_vc3.2.webp', '../assets/imgs/1764695668_2_vc3.1.webp', 'Một thiết kế cực kì kì công đến từ nhà model Dior', 3, '2025-11-20', '2025-12-03', 0, 1, 1, 1),
+(29, 'Vòng tay Dior', 13835522, 5, 2, '../assets/imgs/1764581142_lactaydior.jpg', '../assets/imgs/1764581142_1_lactaydior1.jpg', '../assets/imgs/1764581142_2_lactaydior2.jpg', 'Lắc tay xinh xinh', 10, '2025-12-01', '2025-12-02', 0, 1, 1, 1);
 
 --
 -- Bẫy `product`
@@ -720,7 +797,8 @@ INSERT INTO `user` (`id`, `fullname`, `email`, `phone_number`, `password`, `role
 (1, 'Diệu Thảo', 'dieuthao1809206@gmail.com', '0347367621', '$2a$12$L4AwLzAJb662zW1CD/tpHOVRnFIYQbj2q8rd.fdTrOk9Ccq0S7H82', 1, '2025-11-20', NULL, 0, NULL, NULL),
 (2, 'Mỹ Linh', 'mylinh1234@gmail.com', '0999999999', '$2a$12$PPskDJkYOV/7EYk.W0/DGeeho0l69iOa1heL7x/2aO27X4VgNpRMS', 3, '2025-11-20', NULL, 0, NULL, NULL),
 (3, 'Cẩm Hà', 'camha@gmail.com', '0888888888', '$2a$12$vpRbjSQCAOpjP7lg0NOrmOs9vzPF67GTjrC1AddtCea60HtuWloJK', 2, '2025-11-20', NULL, 0, NULL, NULL),
-(4, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '$2a$12$vpRbjSQCAOpjP7lg0NOrmOs9vzPF67GTjrC1AddtCea60HtuWloJK', 3, '2025-11-20', NULL, 0, NULL, NULL);
+(4, 'ltdt', 'dieuthaole06@gmail.com', '0777777777', '$2a$12$vpRbjSQCAOpjP7lg0NOrmOs9vzPF67GTjrC1AddtCea60HtuWloJK', 3, '2025-11-20', NULL, 0, NULL, NULL),
+(5, 'dth', 'thao@gmail.com', '0987654321', '$2y$10$fFuAwRxTuKvjvBWQS/S2l.VuU9J8YST7RVdgboZb6oTOlW6YTngl6', 3, '2025-12-03', NULL, 0, NULL, NULL);
 
 --
 -- Bẫy `user`
@@ -778,6 +856,12 @@ ALTER TABLE `import`
 ALTER TABLE `importdetail`
   ADD KEY `product_id` (`product_id`),
   ADD KEY `import_id` (`import_id`);
+
+--
+-- Chỉ mục cho bảng `momo_payments`
+--
+ALTER TABLE `momo_payments`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Chỉ mục cho bảng `order`
@@ -863,16 +947,22 @@ ALTER TABLE `import`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT cho bảng `momo_payments`
+--
+ALTER TABLE `momo_payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
 -- AUTO_INCREMENT cho bảng `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT cho bảng `orderdetail`
 --
 ALTER TABLE `orderdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT cho bảng `permission`
@@ -908,7 +998,7 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT cho bảng `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
