@@ -6,10 +6,10 @@ include_once("../controllers/paymentcontr.s.php");
 if (session_status() == PHP_SESSION_NONE) session_start();
 
 // PHẢI bấm nút PLACE ORDER
-if (!isset($_POST["place-order"])) {
-    header("Location: ../templates/trangchu.php?notsubmitted");
-    exit();
-}
+// if (!isset($_POST["place-order"])) {
+//     header("Location: ../templates/trangchu.php?notsubmitted");
+//     exit();
+// }
 
 // LẤY PHƯƠNG THỨC THANH TOÁN USER ĐÃ CHỌN
 $method = $_POST["selected_payment"] ?? "";

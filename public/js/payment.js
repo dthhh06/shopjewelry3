@@ -43,9 +43,24 @@ $(document).ready(function () {
         $("#selected_payment").val(selectedPayment);
 
         // Redirect MoMo / VNPay
-        if (selectedPayment === "momo") {
-            window.location.href = "../includes/momo_atm.php";
-            return;
+if (selectedPayment === "momo") {
+
+    // Lưu thông tin vào session qua ajax
+    $.post("../includes/save_checkout_session.php", {
+        fullname: $("input[name='fullname']").val(),
+        email: $("input[name='email']").val(),
+        phonenumber: $("input[name='phonenumber']").val(),
+        address: $("input[name='address']").val(),
+        district: $("input[name='district']").val(),
+        province: $("input[name='province']").val(),
+        note: $("textarea[name='note']").val()
+    }, function () {
+        window.location.href = "../includes/momo_atm.php";
+    });
+
+    return;
+
+
         } else if (selectedPayment === "vnpay") {
             window.location.href = "../includes/vnpay.php";
             return;
