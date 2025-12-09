@@ -267,7 +267,7 @@
                 <a href="#" class="btn">Learn More</a>
             </div>
             <div class="story-image-container">
-                <img src="../assets/imgs/story.jpg" alt="Jewelry craftsmanship at Aurelia" class="story-image">
+                <img src="../assets/imgs/banner/story.jpg" alt="Jewelry craftsmanship at Aurelia" class="story-image">
             </div>
         </div>
     </div>
@@ -330,9 +330,6 @@
                 <button type="submit" class="newsletter-btn">Subscribe</button>
             </form>
         </div>
-
-
-
 
     <?php include_once('footer.php'); ?>
     <?php include_once("./cart.php"); ?>
