@@ -1,7 +1,7 @@
 <style>
     .lux-footer {
         background: linear-gradient(135deg, #0e0e0e, #1a1a1a, #0f0f0f);
-        color: #e5e5e5;
+        color: #e5e5e5 ;
         padding: 4.5rem 8%;
         font-family: "Dancing script", serif;
         border-top: 1px solid #2f2f2f;
@@ -91,7 +91,7 @@
 
     .lux-footer-links a {
         text-decoration: none;
-        color: #bfbfbf;
+        color: #bfbfbf !important;
         font-size: 0.97rem;
         transition: color 0.3s ease, padding-left 0.3s ease;
     }

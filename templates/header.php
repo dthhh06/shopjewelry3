@@ -1,140 +1,121 @@
 <?php
 session_start();
+
+/* --- CART QUANTITY (FAST) --- */
 $totalOfQuantiy = 0;
-if (isset($_SESSION["cart"])) {
-    $productList = $_SESSION["cart"];
-    foreach ($productList as $product) {
-        $totalOfQuantiy += intval($product["customer_quantity"]);
-    }
+
+if (!empty($_SESSION['cart'])) {
+    // dùng array_sum cho nhanh thay vì foreach
+    $totalOfQuantiy = array_sum(
+        array_map(fn($p) => intval($p['customer_quantity']), $_SESSION['cart'])
+    );
 }
-include_once($_SERVER['DOCUMENT_ROOT'] . "/shopjewelry3/database/connection.php");
+
+/* --- CATEGORY QUERY --- */
+require_once($_SERVER['DOCUMENT_ROOT'] . '/shopjewelry3/database/connection.php');
 
 $db = new Database();
-$dtb = $db->connect();
+$pdo = $db->connect();
 
-$sql = "SELECT * FROM category WHERE isDeleted = 0 ORDER BY id DESC";
-$stmt = $dtb->prepare($sql);
+$stmt = $pdo->prepare("SELECT id, name FROM category WHERE isDeleted = 0 ORDER BY id DESC");
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
-<!-- Fontawesome -->
-<link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
-
-<link rel="stylesheet" href="../public/assets/css/config.css">
-
-
-<!-- CDN Boostrap Css -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-
-<!-- CDN Boostrap Js  -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-
-
-<!-- JQUERY -->
+<!-- Icons + Base CSS -->
+<!-- <link rel="stylesheet" href="../public/assets/icons/css/all.min.css"> -->
+<link rel="stylesheet" href="../public/assets/css/header.css">
 <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
 
-<!-- Js -->
-<script src="../public/js/header.js"></script>
+<header class="tiffany-header" id="tiffanyHeader" role="banner">
+    <div class="header-inner">
 
-<!-- Count the total of quantity of products in the cart -->
+        <!-- LEFT: LOCATION BUTTON -->
+        <a href="javascript:void(0)" class="icon-btn location-btn" title="Location">
+            <i class="fa-solid fa-location-dot"></i>
+        </a>
 
-<div class="container-fluid">
-    <div class="row">
-        <header class="main-header">
-            <div class="common-header py-md-4 py-0 justify-content-md-around justify-content-lg-around justify-content-between">
-                <div class="top-left d-lg-flex d-md-flex d-none">
-                    <i class="fa-brands fa-facebook-f"></i>
-                    <i class="fa-brands fa-pinterest"></i>
-                    <i class="fa-brands fa-google"></i>
-                    <i class="fa-brands fa-square-instagram"></i>
+        <!-- CENTER LOGO -->
+        <a href="./trangchu.php" class="tiffany-logo">
+            <i class="fas fa-gem"></i>Aurelia
+        </a>
+
+        <!-- RIGHT SECTION -->
+        <div class="right-area">
+
+            <!-- USER DROPDOWN -->
+            <div class="header-user" id="headerUser">
+                <button class="header-user-btn icon-btn" id="userBtn" aria-expanded="false" aria-controls="userDropdown">
+                    <i class="fa-regular fa-user"></i>
+                </button>
+
+                <div class="header-user-dropdown" id="userDropdown" role="menu" aria-hidden="true">
+
+                    <?php if (!empty($_SESSION['id'])): ?>
+                        <a href="./customerinfo.php" class="ud-item">
+                            <i class="fa-solid fa-user"></i>
+                            <span class="ud-text"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
+                        </a>
+                        <a href="../includes/logout.inc.php" class="ud-item">
+                            <i class="fa-solid fa-power-off"></i>
+                            <span class="ud-text">Đăng xuất</span>
+                        </a>
+
+                    <?php else: ?>
+                        <a href="../templates/login.php" class="ud-item">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <span class="ud-text">Đăng nhập</span>
+                        </a>
+                        <a href="../templates/signup.php" class="ud-item">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span class="ud-text">Đăng ký</span>
+                        </a>
+                    <?php endif; ?>
+
                 </div>
-                <a href="./trangchu.php" class="logo">
-                    <i class="fas fa-gem"></i>
-                    Aurelia
-                </a>
-
-                <div class="top-right">
-                    <label for="userpanel" class="fa-solid fa-user"></label>
-                    <input type="checkbox" name="" id="userpanel" style="display: none;">
-                    <div class="login-options">
-                        <?php
-                        if (isset($_SESSION["id"])) {
-                            echo "
-                                <a href='./customerinfo.php'>
-                                    <i class='fa-solid fa-user'> </i>
-                                    <span>" . $_SESSION["fullname"] . "</span>
-                                </a>
-                                <a href='../includes/logout.inc.php'>
-                                    <i class='fa-solid fa-power-off'> </i>
-                                    <span>Đăng xuất</span>
-                                </a>";
-                        } else {
-                            echo "
-                                <a href='../templates/login.php'>
-                                    <i class='fa-solid fa-user-plus'></i>
-                                    <span> Đăng nhập</span>
-                                </a>
-                                <a href='../templates/signup.php'>
-                                    <i class='fa-solid fa-right-from-bracket'></i>
-                                    <span> Đăng ký</span>
-                                </a>";
-                        }
-                        ?>
-                    </div>
-                    <a href="javascript:void(0)"
-                        class="shoppingcart" style="cursor:pointer;">
-                        <i class="fa-solid fa-cart-shopping">
-                            <span class="quantity"><?php echo $totalOfQuantiy; ?></span>
-                        </i>
-                    </a>
-
-                    <button type="button" class="btn d-md-none d-lg-none d-flex text-dark text-end fs-4"
-                        data-bs-toggle="collapse" data-bs-target="#collapse-parent"
-                        aria-expanded="false" aria-controls="collapse-parent">
-                        <i class="fa-solid fa-bars ms-auto" style="color: #d4af37;"></i>
-                    </button>
-                </div>
-
             </div>
 
-            <div class="bottom collapse d-lg-block d-md-block" id="collapse-parent">
-                <ul class="list-items bg-white w-100 p-0 m-0 flex-md-row flex-lg-row flex-column align-items-start">
-                    <li class="item">
-                        <a href="../templates/trangchu.php" style="text-decoration: none;">TRANG CHỦ</a>
-                    </li>
-                    <li class="item dropdown position-static">
+            <!-- CART -->
+            <a href="javascript:void(0)" class="shoppingcart icon-btn" title="Giỏ hàng" data-preserve-old-cart="1">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="quantity-badge"><?= $totalOfQuantiy ?></span>
+            </a>
 
-                        <a href="../templates/SanPham.php" class="text-decoration-none">SẢN PHẨM</a>
-
-                        <ul class="child-list-items show-on-hover">
-                            <?php
-                            if ($categories) {
-                                foreach ($categories as $row) {
-                                    echo '
-                <li class="child-item">
-                    <a href="/shopjewelry3/templates/SanPham.php?category_id=' . $row["id"] . '">' . $row["name"] . '</a>
-                </li>
-            ';
-                                }
-                            } else {
-                                echo "<li class='child-item'>Không có loại sản phẩm</li>";
-                            }
-                            ?>
-                        </ul>
-
-
-
-                    </li>
-                    <li class="item">
-                        <a href="../templates/gioithieu.php" style="text-decoration: none;">GIỚI THIỆU</a>
-                    </li>
-                    <li class="item">
-                        <a href="./feedback.php" style="text-decoration: none;">PHẢN HỒI</a>
-                    </li>
-                </ul>
-            </div>
-        </header>
+        </div>
     </div>
-</div>
+
+    <!-- NAVIGATION -->
+    <nav class="tiffany-nav" role="navigation" aria-label="Main Navigation">
+        <ul class="nav-list" >
+
+            <li class="nav-item">
+                <a href="../templates/trangchu.php" style="text-decoration: none !important;">TRANG CHỦ</a>
+            </li>
+
+            <li class="item dropdown position-static">
+                <a href="../templates/SanPham.php" class="text-decoration-none" >SẢN PHẨM</a>
+
+                <ul class="child-list-items show-on-hover">
+                    <?php if ($categories): ?>
+                        <?php foreach ($categories as $c): ?>
+                            <li class="child-item">
+                                <a href="/shopjewelry3/templates/SanPham.php?category_id=<?= $c['id'] ?>">
+                                    <?= htmlspecialchars($c['name']) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <li class="child-item">Không có loại sản phẩm</li>
+                    <?php endif; ?>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="../templates/gioithieu.php">GIỚI THIỆU</a></li>
+            <li class="nav-item"><a href="../templates/feedback.php">PHẢN HỒI</a></li>
+
+        </ul>
+    </nav>
+
+    <script src="../public/js/header.js"></script>
+
+</header>

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../public/assets/css/config.css">
     <link rel="stylesheet" href="../public/assets/css/sanpham.css">
     <link rel="stylesheet" href="../public/assets/css/homepage.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
 
     <!-- SCRIPT -->
     <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
@@ -20,10 +22,6 @@
     <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
 </head>
 <style>
-.product .big a{
-    text-decoration: none;
-    color: #000;
-}
     /* Hero Section */
     .hero-wrapper {
         position: relative;
@@ -143,7 +141,6 @@
         margin-bottom: 2rem !important;
         opacity: 0.9 !important;
     }
-    
 </style>
 
 <body>
@@ -173,8 +170,7 @@
                 <p class="hero-subtitle">EXQUISITE COLLECTION</p>
                 <h1 class="hero-title">Timeless Elegance in Every Detail</h1>
                 <p class="hero-description">
-                    Discover our handcrafted jewelry pieces, meticulously designed to celebrate
-                    life's most precious moments with unparalleled beauty and craftsmanship.
+                    Khám phá những món trang sức thủ công của chúng tôi, được thiết kế tỉ mỉ để tôn vinh những khoảnh khắc quý giá nhất của cuộc sống với vẻ đẹp và sự tinh xảo không gì sánh bằng.
                 </p>
                 <a href="#" class="btn">Explore Collection</a>
             </div>
@@ -196,8 +192,7 @@
         <div class="collection-banner">
             <div class="banner-content">
                 <h2 class="banner-title">The Autumn Collection</h2>
-                <p class="banner-text">Embrace the warmth of the season with our latest collection, featuring rich gold
-                    tones and exquisite gemstones that capture the essence of fall.</p>
+                <p class="banner-text">Tận hưởng sự ấm áp của mùa này với bộ sưu tập mới nhất của chúng tôi, với tông màu vàng rực rỡ và đá quý tinh tế, lưu giữ bản chất của mùa thu.</p>
                 <a href="#" class="btn btn-light">Discover Now</a>
             </div>
         </div>
@@ -207,8 +202,9 @@
             <h2 class="section-title">Client Testimonials</h2>
             <div class="testimonial-grid">
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"The craftsmanship of my engagement ring exceeded all expectations. The
-                        attention to detail is remarkable, and I receive compliments everywhere I go."</p>
+                    <p class="testimonial-text">"
+                        Tay nghề chế tác chiếc nhẫn đính hôn của tôi vượt xa mọi mong đợi.
+                        Sự tỉ mỉ đến từng chi tiết thật đáng kinh ngạc, và tôi nhận được lời khen ngợi ở mọi nơi tôi đến."</p>
                     <div class="testimonial-author">
                         <img src="../assets/imgs/banner/women2.jpg" alt="Sarah Johnson" class="author-image">
                         <div>
@@ -219,8 +215,8 @@
                 </div>
 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"I've purchased multiple pieces from this jeweler over the years. Each
-                        piece tells a story and holds sentimental value. Their quality is unmatched."</p>
+                    <p class="testimonial-text">"Tôi đã mua nhiều món đồ từ tiệm kim hoàn này trong nhiều năm qua.
+                        Mỗi món đồ đều kể một câu chuyện và mang giá trị tình cảm. Chất lượng của chúng là vô song."</p>
                     <div class="testimonial-author">
                         <img src="../assets/imgs/banner/men1.jpg" alt="Michael Thompson" class="author-image">
                         <div>
@@ -231,8 +227,7 @@
                 </div>
 
                 <div class="testimonial-card">
-                    <p class="testimonial-text">"The custom design service allowed me to create a truly unique piece for
-                        my wife's anniversary gift. The designers captured exactly what I envisioned."</p>
+                    <p class="testimonial-text">"Dịch vụ thiết kế riêng đã cho phép tôi tạo ra một món quà kỷ niệm thực sự độc đáo cho vợ tôi. Các nhà thiết kế đã nắm bắt chính xác những gì tôi hình dung."</p>
                     <div class="testimonial-author">
                         <img src="../assets/imgs/banner/women1.jpg" alt="Jimes Wilsony" class="author-image">
                         <div>
@@ -255,14 +250,13 @@
             <div class="story-text">
                 <h2 class="section-title">Our Story</h2>
                 <p class="story-paragraph">
-                    At Aurelia, we believe every piece of jewelry tells a story — of love, heritage, and artistry.
-                    For over two decades, we’ve been handcrafting timeless designs that celebrate the moments that
-                    matter most. Our team of skilled artisans combines traditional craftsmanship with modern
-                    elegance, using only the finest ethically sourced materials.
+                    Tại Aurelia, chúng tôi tin rằng mỗi món trang sức đều kể một câu chuyện — về tình yêu, di sản và nghệ thuật.
+Trong hơn hai thập kỷ, chúng tôi đã chế tác thủ công những thiết kế vượt thời gian, tôn vinh những khoảnh khắc
+quan trọng nhất. Đội ngũ nghệ nhân lành nghề của chúng tôi kết hợp kỹ thuật thủ công truyền thống với
+sự thanh lịch hiện đại, chỉ sử dụng những vật liệu tốt nhất có nguồn gốc đạo đức.
                 </p>
                 <p class="story-paragraph">
-                    From the first sketch to the final polish, each creation is a testament to our commitment to
-                    excellence. We invite you to explore a world where passion meets precision.
+                    Từ bản phác thảo đầu tiên đến bản hoàn thiện cuối cùng, mỗi tác phẩm là minh chứng cho cam kết của chúng tôi về sự xuất sắc. Chúng tôi mời bạn khám phá một thế giới nơi đam mê hòa quyện cùng sự chính xác.
                 </p>
                 <a href="#" class="btn">Learn More</a>
             </div>
@@ -276,14 +270,10 @@
         <div class="about-container">
             <h2 class="about-title">Our Story</h2>
             <p class="about-paragraph">
-                At Aurelia, we believe that true beauty lies in timeless design and intentional craftsmanship. Every
-                piece we create is a tribute to life’s most cherished moments — carefully shaped by hand, guided by
-                tradition, and finished with elegance.
+                Tại Aurelia, chúng tôi tin rằng vẻ đẹp đích thực nằm ở thiết kế vượt thời gian và sự khéo léo tinh tế. Mỗi sản phẩm chúng tôi tạo ra đều là sự tôn vinh những khoảnh khắc đáng trân trọng nhất của cuộc sống — được tạo hình tỉ mỉ bằng tay, được dẫn dắt bởi truyền thống và được hoàn thiện một cách tinh tế.
             </p>
             <p class="about-paragraph">
-                With a commitment to ethical sourcing and artisanal precision, our collections reflect more than
-                luxury — they reflect legacy. From bespoke engagement rings to everyday fine jewelry, we craft each
-                design to become a part of your story.
+                Với cam kết về nguồn cung ứng có đạo đức và độ chính xác thủ công, các bộ sưu tập của chúng tôi không chỉ phản ánh sự sang trọng — mà còn phản ánh di sản. Từ nhẫn đính hôn được thiết kế riêng đến trang sức tinh xảo hàng ngày, chúng tôi chế tác từng
             </p>
             <a href="#" class="btn">Explore the Collection</a>
         </div>
@@ -320,16 +310,15 @@
         </div>
     </section>
     <!-- End product -->
-             <!-- Newsletter -->
-        <div class="newsletter">
-            <h2 class="newsletter-title">Join Our Newsletter</h2>
-            <p class="newsletter-text">Subscribe to receive updates on new collections, exclusive offers, and styling
-                inspiration.</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Your email address" class="newsletter-input" required>
-                <button type="submit" class="newsletter-btn">Subscribe</button>
-            </form>
-        </div>
+    <!-- Newsletter -->
+    <div class="newsletter">
+        <h2 class="newsletter-title">Join Our Newsletter</h2>
+        <p class="newsletter-text">Đăng ký để nhận thông tin cập nhật về bộ sưu tập mới, ưu đãi độc quyền và nguồn cảm hứng về phong cách.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" class="newsletter-input" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+    </div>
 
     <?php include_once('footer.php'); ?>
     <?php include_once("./cart.php"); ?>

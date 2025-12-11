@@ -56,35 +56,35 @@ ul {
 }
 a{
   text-decoration: none !important;
-  color:#000000;
+  color:#000000 !important;
 }
 
 main {
   padding-bottom: 50px;
 }
 /*btn*/
-    .btn {
-        padding: 0.7rem 2rem !important;
-        font-size: 0.95rem !important;
-        background: transparent !important;
-        color: #000000ff !important;
-        border: 2px solid #000 !important;
-        border-radius: 0 !important;
-        font-family: 'Cinzel', serif !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        display: inline-block !important;
-        text-decoration: none !important;
+.btn{
+  padding: 0.7rem 2rem !important;
+  font-size: 0.95rem !important;
+  background: transparent !important;
+  color: #000000ff !important;
+  border: 2px solid #000 !important;
+  border-radius: 0 !important;
+  font-family: 'Cinzel', serif !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: inline-block !important;
+  text-decoration: none !important;
     }
 
-    .btn:hover {
-        background: #000000ff !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
-    }
+.btn:hover {
+  background: #000000ff !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
+  }
 /*Header*/
-.logo {
+/* /* .logo {
   font-family: 'Cinzel', serif;
   font-size: 2rem;
   font-weight: 600;
@@ -97,8 +97,8 @@ main {
 .logo i {
   margin-right: 10px;
   font-size: 1.8rem;
-}
-.main-header {
+} */
+/* .main-header {
     position: fixed;
     top: 0;
     left: 0;
@@ -131,7 +131,7 @@ main {
     font-family: 'Cinzel', serif;
     font-size: 2.1rem;
     font-weight: 700;
-    color: #b2976d;
+    color: #b2976d !important;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -175,7 +175,7 @@ main {
 
 .top-right > label,
 .top-right .shoppingcart {
-    color: #d4b786;
+    color: #d4b786 !important;
     font-size: 23px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -349,10 +349,10 @@ main {
     border: none;
     font-size: 28px;
     color: #d4b786;
-}
+} */
 
 /* Responsive */
-@media (max-width: 992px) {
+/* @media (max-width: 992px) {
     .top-left, .bottom:not(.show) {
         display: none !important;
     }
@@ -385,7 +385,7 @@ main {
 }
 
 main { margin-top: 160px; }
-.main-header.scrolled + main { margin-top: 120px; }
+.main-header.scrolled + main { margin-top: 120px; }  */
 /* login */
 #userpanel:checked ~ .login-options {
   display: flex;
