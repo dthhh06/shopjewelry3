@@ -154,7 +154,7 @@
         unset($_SESSION['order_placed']);
     }
     ?>
-    <?php include_once 'header.php'; ?>
+    <?php include_once('./header.php') ?>
 
     <!-- Home Section -->
     <section class="home-section">

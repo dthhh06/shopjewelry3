@@ -142,7 +142,7 @@
 /* === NAV === */
 .tiffany-nav {
     width: 100%;
-    margin-top: -15px;
+  
     text-align: center;
 }
 
@@ -154,17 +154,15 @@
     margin: 0;
     padding: 0;
 }
-
-/* === FIX DOTTED/UNDERLINE DEFAULT CHROME */ 
 .nav-list a {
-    position: relative;
-    text-decoration: none !important; /* fix dotted underline */
-    padding: 14px 0; 
-    font-weight: 600;
-    letter-spacing: 1px;
     display: flex;
     align-items: center;
-    line-height: 1;
+    height: 48px;     /* ⭐ GIỮ TẤT CẢ CÁC MỤC BẰNG NHAU */
+}
+.nav-list li {
+
+    display: flex;
+    align-items: center;   /* ⭐ giúp mục SẢN PHẨM không bị lệch */
 }
 
 /* underline base */
@@ -174,7 +172,7 @@
     left: 0;
     bottom: -4px;
     height: 2px;
-    width: 0;
+   
     transition: width .25s ease;
 }
 
@@ -192,24 +190,19 @@
 .nav-list a:hover::after {
     width: 100%;
 }
-
-/* === DROPDOWN === */
-.dropdown { position: relative; }
-
 .show-on-hover {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 6px);  /* ⭐ nằm ngay dưới chữ SẢN PHẨM */
     left: 50%;
-    transform: translateX(-50%) translateY(8px);
-    background: white;
-    min-width: 240px;
-    padding: 12px 0;
+    transform: translateX(-50%);
     opacity: 0;
     visibility: hidden;
-    transition: all .35s ease;
+    background: white;
+    min-width: 220px;
     border: 1px solid #eee;
-    box-shadow: 0 15px 45px rgba(0,0,0,.12);
-    z-index: 999;
+    padding: 10px 0;
+    transition: all .25s ease;
+    z-index: 9999;
 }
 
 .dropdown:hover .show-on-hover {
@@ -236,4 +229,27 @@
 @media (max-width: 992px) {
     .nav-list { gap: 18px; }
     .header-inner { padding: 14px 4%; }
+}
+.nav-list > li {
+    height: 46px;       /* ⭐ Chiều cao cố định để không ai bị lệch */
+    display: flex;
+    align-items: center;
+}
+.nav-list > li > a {
+    line-height: 46px;   /* ⭐ Chữ luôn nằm chính giữa */
+}
+
+
+.nav-list a:hover::after {
+    width: 0 !important;   /* xoá luôn khi hover */
+}
+.nav-list li::after {
+    display: none !important;
+}
+.nav-list li {
+    border-bottom: none !important;
+}
+
+.nav-list li a {
+    border-bottom: none !important;
 }

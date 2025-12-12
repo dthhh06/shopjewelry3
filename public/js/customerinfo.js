@@ -211,3 +211,10 @@ $(document).ready(function () {
   // Initially: show account info by default
   $(".btns-group > .btn").first().trigger("click");
 });
+
+document.getElementById("avatarInput").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        document.getElementById("avatarPreview").src = URL.createObjectURL(file);
+    }
+});

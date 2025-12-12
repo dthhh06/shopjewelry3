@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 /* --- CART QUANTITY (FAST) --- */
 $totalOfQuantiy = 0;
@@ -92,7 +94,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <a href="../templates/trangchu.php" style="text-decoration: none !important;">TRANG CHỦ</a>
             </li>
 
-            <li class="item dropdown position-static">
+           <li class="item dropdown">
                 <a href="../templates/SanPham.php" class="text-decoration-none" >SẢN PHẨM</a>
 
                 <ul class="child-list-items show-on-hover">

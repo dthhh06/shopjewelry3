@@ -22,9 +22,7 @@
 </head>
 
 <body>
-    <?php
-    include_once("../templates/header.php");
-    ?>
+    <?php include_once('./header.php') ?>
 
     <main id="login-main" class="container mt-xs-5">
         <div class="row">

@@ -24,52 +24,22 @@ $productDetails = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi Tiết Sản Phẩm</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
 
     <link rel="stylesheet" href="../public/assets/css/config.css">
     <link rel="stylesheet" href="../public/assets/css/sanpham.css">
+    <link rel="stylesheet" href="../public/assets/css/productdetail.css">
+
     <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
     <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
     <script src="../public/js/cart.js"></script>
+    <script src="../public/js/productdetail_comment.js"></script>
 
     <script>
         function changeImage(src) {
             document.getElementById("mainImage").src = src;
         }
     </script>
-
-    <style>
-        .thumb-list img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            cursor: pointer;
-            margin-right: 10px;
-            border-radius: 5px;
-        }
-
-        .thumb-list img:hover {
-            border-color: #d4af37;
-        }
-
-        .big-image img {
-            width: 100%;
-            height: 450px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .product-info {
-            margin-left: 100px;
-        }
-
-        .pro-price {
-            font-size: 20px;
-            font-weight: 400;
-            color: #d4af37;
-        }
-    </style>
 </head>
 
 <body>
@@ -111,19 +81,19 @@ $productDetails = $result->fetch_assoc();
                     <div class="thumb-list mt-3 d-flex">
 
                         <!-- Thumbnail -->
-                        <img onclick="changeImage('<?= $productDetails['thumbnail']; ?>')" 
-                             src="<?= $productDetails['thumbnail']; ?>">
+                        <img onclick="changeImage('<?= $productDetails['thumbnail']; ?>')"
+                            src="<?= $productDetails['thumbnail']; ?>">
 
                         <!-- Image 1 -->
                         <?php if (!empty($productDetails['image1'])) { ?>
-                            <img onclick="changeImage('<?= $productDetails['image1']; ?>')" 
-                                 src="<?= $productDetails['image1']; ?>">
+                            <img onclick="changeImage('<?= $productDetails['image1']; ?>')"
+                                src="<?= $productDetails['image1']; ?>">
                         <?php } ?>
 
                         <!-- Image 2 -->
                         <?php if (!empty($productDetails['image2'])) { ?>
-                            <img onclick="changeImage('<?= $productDetails['image2']; ?>')" 
-                                 src="<?= $productDetails['image2']; ?>">
+                            <img onclick="changeImage('<?= $productDetails['image2']; ?>')"
+                                src="<?= $productDetails['image2']; ?>">
                         <?php } ?>
 
                     </div>
@@ -177,9 +147,144 @@ $productDetails = $result->fetch_assoc();
             <img class="img-responsive w-100" src="../<?= $productDetails['thumbnail']; ?>" alt="">
         </div>
 
+        <!-- ================= COMMENT SECTION ================= -->
+        <div id="commentsSection" data-product-id="<?= $product_id ?>">
+
+            <div class="comment-wrapper">
+
+                <h4 class="cmt-title">Đánh giá & Bình luận</h4>
+
+                <!-- Rating -->
+                <div class="rating-stars">
+                    <i class="fa-solid fa-star" data-index="0"></i>
+                    <i class="fa-solid fa-star" data-index="1"></i>
+                    <i class="fa-solid fa-star" data-index="2"></i>
+                    <i class="fa-solid fa-star" data-index="3"></i>
+                    <i class="fa-solid fa-star" data-index="4"></i>
+                </div>
+
+                <input type="hidden" id="ratingInput" value="0">
+
+                <!-- Comment box -->
+                <div class="comment-box">
+                    <textarea id="commentText" placeholder="Nhập bình luận của bạn..."></textarea>
+                    <button id="submitComment">Gửi bình luận</button>
+                </div>
+
+                <h5 class="cmt-subtitle">Các bình luận:</h5>
+                <div id="commentList"></div>
+
+            </div>
+
+        </div>
+
+        <style>
+            
+            /* Khung tổng chứa mọi thứ */
+            .comment-wrapper {
+                width: 100%;
+                max-width: 1200px;
+                padding: 20px;
+                margin: 0 auto;
+                background: #ffffff;
+                border-radius: 12px;
+                border: 1px solid #e8e8e8;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                margin-bottom: 30px;
+            }
+
+            .cmt-title {
+                font-weight: 600;
+                margin-bottom: 15px;
+            }
+
+            .cmt-subtitle {
+                margin-top: 25px;
+                font-weight: 600;
+            }
+
+            /* Comment box */
+            .comment-box {
+                margin-top: 15px;
+                padding: 15px;
+                border-radius: 10px;
+                background: #fafafa;
+                border: 1px solid #e5e5e5;
+            }
+
+            .comment-box textarea {
+                width: 100%;
+                min-height: 110px;
+                border-radius: 8px;
+                padding: 12px;
+                border: 1px solid #ccc;
+                resize: vertical;
+                margin-bottom: 10px;
+            }
+
+            .comment-box button {
+                padding: 10px 18px;
+                border-radius: 8px;
+                background: #ff9900;
+                border: none;
+                color: white;
+                cursor: pointer;
+                font-weight: 600;
+            }
+
+            .comment-box button:hover {
+                background: #ff7b00;
+            }
+
+            /* Rating Stars */
+            .rating-stars {
+                display: flex;
+                gap: 6px;
+                cursor: pointer;
+                margin-bottom: 10px;
+            }
+
+            .rating-stars i {
+                font-size: 32px;
+                color: #d5d5d5;
+                transition: 0.15s;
+            }
+
+            .rating-stars i.hovered,
+            .rating-stars i.selected {
+                color: #ffc400;
+                transform: scale(1.1);
+            }
+
+            /* Comment item */
+            .comment-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+            .comment-item img {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+
+            .comment-content .name {
+                font-weight: 600;
+                margin-bottom: 2px;
+            }
+
+            .comment-content .date {
+                color: #888;
+                font-size: 13px;
+                margin-bottom: 3px;
+            }
+        </style>
         <?php include_once('footer.php'); ?>
     </div>
-
+    <script src="../public/js/productdetail_comment.js"></script>
     <?php include("./cart.php"); ?>
 
 

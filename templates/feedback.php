@@ -23,7 +23,7 @@
 
 <body>
     <div class="page">
-        <?php include_once('./header.php'); ?>
+    <?php include_once('./header.php') ?>
 
     <div class="feedback-container">
         <h1>Feedback Form</h1>

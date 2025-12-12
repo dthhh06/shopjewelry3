@@ -29,7 +29,7 @@
 </style>
 
 <body>
-    <?php include_once('../templates/header.php'); ?>
+    <?php include_once('./header.php') ?>
 
     <section>
         <div class="wrapper_" style="height: 90px; color:#fff">

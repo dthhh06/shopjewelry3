@@ -1,3 +1,60 @@
+<?php
+session_start();
+
+// kết nối DB (đảm bảo path đúng với cấu trúc của bạn)
+require_once __DIR__ . '/../database/connection.php';
+
+// Hàm chuẩn hoá đường dẫn avatar để trình duyệt có thể load được
+function normalizeAvatarPath($path)
+{
+	// mặc định (thay /shopjewelry3/ bằng tên folder project nếu khác)
+	$projectBase = '/shopjewelry3';
+
+	if (empty($path)) {
+		return $projectBase . '/assets/imgs/default-avatar.png';
+	}
+
+	// nếu DB lưu '../assets/...' => chuyển thành '/shopjewelry3/assets/...'
+	if (strpos($path, '../') === 0) {
+		return $projectBase . '/' . ltrim(str_replace('../', '', $path), '/');
+	}
+
+	// nếu đã là đường dẫn bắt đầu bằng '/' (ví dụ '/shopjewelry3/assets/...')
+	if (strpos($path, '/') === 0) {
+		return $path;
+	}
+
+	// nếu chỉ lưu tên file 'abc.jpg' hoặc 'assets/...'
+	// trả về đường dẫn chuẩn
+	if (strpos($path, 'assets/') === 0) {
+		return $projectBase . '/' . $path;
+	}
+
+	// mặc định nối project base + path
+	return $projectBase . '/' . ltrim($path, '/');
+}
+
+// Lấy thông tin user từ DB nếu đã login (session id có)
+$row = null;
+if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
+	try {
+		$db = new Database();
+		$conn = $db->connect();
+
+		$stmt = $conn->prepare("SELECT * FROM `user` WHERE id = :id LIMIT 1");
+		$stmt->execute([':id' => $_SESSION['id']]);
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	} catch (Exception $e) {
+		// nếu có lỗi DB thì log hoặc debug ngắn
+		error_log("Failed to fetch user: " . $e->getMessage());
+		$row = null;
+	}
+}
+
+// avatar dùng: ưu tiên DB ($row), nếu không thì session, cuối cùng là default
+$avatar_raw = $row['avatar'] ?? $_SESSION['avatar'] ?? null;
+$avatar_url = normalizeAvatarPath($avatar_raw);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -59,10 +116,42 @@
 					</h5>
 					<div class="customerinfo-content">
 						<div class="customerinfo__info d-none">
-							<span style="font-weight: 600; font-size: 16px;">Họ tên: </span><span style="font-size: 14px;"><?php echo $_SESSION["fullname"]; ?></span>
+
+							<!-- Ảnh đại diện -->
+							<div class="mb-3">
+								<h6 style="font-weight:600;">Ảnh đại diện</h6>
+								<img id="avatarPreview"
+									src="<?php echo htmlspecialchars($avatar_url); ?>"
+									style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid #ccc;">
+
+							</div>
+
+							<!-- Form upload avatar -->
+							<form action="../includes/update_avatar.php"
+								method="POST" enctype="multipart/form-data">
+
+								<label class="form-label">Đổi avatar:</label>
+								<input type="file" name="avatar" id="avatarInput" class="form-control"
+									accept="image/*">
+
+								<button type="submit"
+									class="btn btn-primary mt-3"
+									style="background-color:#d4af37; border:none;">
+									Lưu avatar
+								</button>
+							</form>
+
+							<hr>
+
+							<!-- Các thông tin khác -->
+							<span style="font-weight: 600; font-size: 16px;">Họ tên: </span>
+							<span style="font-size: 14px;"><?php echo $_SESSION["fullname"]; ?></span>
 							<br />
-							<span style="font-weight: 600; font-size: 16px;">Email: </span><span style="font-size: 14px;"><?php echo $_SESSION["useremail"]; ?></span>
+
+							<span style="font-weight: 600; font-size: 16px;">Email: </span>
+							<span style="font-size: 14px;"><?php echo $_SESSION["useremail"]; ?></span>
 						</div>
+
 
 						<div class="customerinfo__orders d-none">
 							<table class="table table-striped">
