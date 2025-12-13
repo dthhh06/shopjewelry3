@@ -11,42 +11,41 @@ if ($conn->connect_error) {
 }
 
 $results_per_page = 9;
-
-$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$current_page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 
 // Start with a base SQL query
 $sql = "SELECT * FROM product WHERE 1=1";
 $params = [];
-$types = ''; 
-
+$types = '';
 
 // Filter based on price range
 if (isset($_GET["filter-product"], $_GET["input-min"], $_GET["input-max"])) {
-    $fromPrice = $_GET["input-min"];
-    $toPrice = $_GET["input-max"];
+    $fromPrice = (float)$_GET["input-min"];
+    $toPrice = (float)$_GET["input-max"];
     $sql .= " AND price BETWEEN ? AND ?";
-    $types .= 'dd'; 
-    array_push($params, $fromPrice, $toPrice);
+    $types .= 'dd';
+    $params[] = $fromPrice;
+    $params[] = $toPrice;
 }
 
 // Filter based on search query
-if (isset($_GET['search'])) {
+if (!empty($_GET['search'])) {
     $search = '%' . $_GET['search'] . '%';
     $sql .= " AND title LIKE ?";
-    $types .= 's'; 
+    $types .= 's';
     $params[] = $search;
 }
 
 // Filter based on category
-if (isset($_GET["category_id"])) {
-    $category_id = $_GET["category_id"];
+if (!empty($_GET["category_id"])) {
+    $category_id = (int)$_GET["category_id"];
     $sql .= " AND category_id = ?";
     $types .= 'i';
     $params[] = $category_id;
 }
 
 // Sorting
-if (isset($_GET["sort"])) {
+if (isset($_GET["sort"]) && !empty($_GET["sort"])) {
     switch ($_GET["sort"]) {
         case 'price-asc':
             $sql .= ' ORDER BY price ASC';
@@ -60,56 +59,53 @@ if (isset($_GET["sort"])) {
         case 'name-desc':
             $sql .= ' ORDER BY title DESC';
             break;
+        default:
+            // no additional order
+            break;
     }
 }
 
+// Prepare and execute to get total count (without LIMIT)
 $stmt = $conn->prepare($sql);
-if ($types) {
+if ($types !== '') {
+    // bind params dynamically
     $stmt->bind_param($types, ...$params);
 }
 $stmt->execute();
 $result = $stmt->get_result();
 $number_of_results = $result->num_rows;
 
-$number_of_pages = ceil($number_of_results / $results_per_page);
+$number_of_pages = max(1, ceil($number_of_results / $results_per_page));
 
 $this_page_first_result = ($current_page - 1) * $results_per_page;
 
-$sql .= " LIMIT ?, ?";
-$types .= 'ii';
-array_push($params, $this_page_first_result, $results_per_page);
+// Append LIMIT (and bind new ii params)
+$sql_with_limit = $sql . " LIMIT ?, ?";
+$types_with_limit = $types . 'ii';
+$params_with_limit = $params;
+$params_with_limit[] = $this_page_first_result;
+$params_with_limit[] = $results_per_page;
 
-$stmt = $conn->prepare($sql);
-if ($types) {
-    $stmt->bind_param($types, ...$params);
+$stmt->close();
+
+$stmt = $conn->prepare($sql_with_limit);
+if ($types_with_limit !== '') {
+    $stmt->bind_param($types_with_limit, ...$params_with_limit);
 }
 $stmt->execute();
 $query = $stmt->get_result();
 
-$filters = isset($filters) ? $filters : [];
-unset($filters['page']);
+// Build filter query for links (exclude page)
+$filters = $_GET;
+if (isset($filters['page'])) unset($filters['page']);
+$filter_query = http_build_query($filters);
 
-$paramsFromUrl = $_GET;
+// Fetch categories (use separate variable so we don't override $sql)
+$category_sql = "SELECT * FROM `category`";
+$category_result = $conn->query($category_sql);
 
-foreach ($paramsFromUrl as $key => $value) {
-    if (!array_key_exists($key, $filters)) {
-        $filters[$key] = $value;
-    }
-}
-
-print_r($filters);
-$filter_query = http_build_query($filters); 
-
-for ($page = 1; $page <= $number_of_pages; $page++) {
-    
-    $link = "SanPham.php?" . $filter_query . (!empty($filter_query) ? "&" : "") . "page=" . $page;
-    echo '<a href="' . $link . '">' . $page . '</a> ';
-}
-
-$sql = "SELECT * FROM `category`";
-$result = $conn->query($sql);
-
-$stmt->close();
+// Do not close $stmt here until done using results.
+// We'll close it after rendering if needed.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,15 +126,14 @@ $stmt->close();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
      
     <!-- JS -->
-    <script src="../public/js/cart.js" defer></script>
 </head>
+<script src="../public/js/cart.js"></script>
 
 <body>
+    <!--Start Header-->
+    <?php include_once('./header.php'); ?>
+    <!-- End Header -->
     <div class="page">
-        <!--Start Header-->
-        <?php include_once('./header.php'); ?>
-        <!-- End Header -->
-
         <div class="container py-0" style="margin-top:160px">
             <div class="row">
                 <!--Start bread-crumb -->
@@ -300,13 +295,13 @@ $stmt->close();
                         }
                         for ($pages = 1; $pages <= $number_of_pages; $pages++) {
                             if ($pages == $current_page) {
-                                echo '<li class="page-item active"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET['input-max'] . '&filter-product=filter-product&page=' . $pages . '">' . $pages . '</a></li>';
+                                echo '<li class="page-item active"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET["input-max"] . '&filter-product=filter-product&page=' . $pages . '">' . $pages . '</a></li>';
                             } else {
-                                echo '<li class="page-item"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET['input-max'] . '&filter-product=filter-product&page=' . $pages . '">' . $pages . '</a></li>';
+                                echo '<li class="page-item"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET["input-max"] . '&filter-product=filter-product&page=' . $pages . '">' . $pages . '</a></li>';
                             }
                         }
                         if ($current_page < $number_of_pages) {
-                            echo '<li class="page-item"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET['input-max'] . '&filter-product=filter-product&page=' . ($current_page + 1) . '">Next</a></li>';
+                            echo '<li class="page-item"><a class="page-link" href="SanPham.php?input-min=' . $_GET["input-min"] . '&input-max=' . $_GET["input-max"] . '&filter-product=filter-product&page=' . ($current_page + 1) . '">Next</a></li>';
                         }
                         echo '</ul>';
                         echo '</nav>';
@@ -333,10 +328,10 @@ $stmt->close();
                                         <i class="fa fa-angle-down sub-btn"></i>
                                         <div class="sub-menu">
                                             <?php
-                                            if ($result->num_rows > 0) {
+                                            if ($category_result && $category_result->num_rows > 0) {
                                                 // Xuất dữ liệu của mỗi hàng
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<a class="sub-item" href="SanPham.php?category_id=' . $row["id"] . '"> <i class="fa fa-caret-right"></i>' . $row["name"] . '</a>';
+                                                while ($cat = $category_result->fetch_assoc()) {
+                                                    echo '<a class="sub-item" href="SanPham.php?category_id=' . $cat["id"] . '"> <i class="fa fa-caret-right"></i>' . $cat["name"] . '</a>';
                                                 }
                                             } else {
                                                 echo "Không có loại sản phẩm";
@@ -364,11 +359,11 @@ $stmt->close();
                         <div class="aside-content filter-group">
                             <div class="price-input d-flex justify-content-center align-items-center">
                                 <div class="field">
-                                    <input type="number" class="input-min" value="<?php echo isset($_GET['input-min']) ? $_GET['input-min'] : "25000000" ?>" name="input-min">
+                                    <input type="number" class="input-min" value="<?php echo isset($_GET['input-min']) ? htmlspecialchars($_GET['input-min']) : "25000000" ?>" name="input-min">
                                 </div>
                                 <div class="separator">-</div>
                                 <div class="field">
-                                    <input type="number" class="input-max" value="<?php echo isset($_GET['input-max']) ? $_GET['input-max'] : '75000000'; ?>" name="input-max">
+                                    <input type="number" class="input-max" value="<?php echo isset($_GET['input-max']) ? htmlspecialchars($_GET['input-max']) : '75000000'; ?>" name="input-max">
                                 </div>
                             </div>
                             <div class="slider">
@@ -397,18 +392,16 @@ $stmt->close();
                                     // Lấy giá trị category_id từ URL
                                     $selectedCategoryId = isset($_GET['category_id']) ? $_GET['category_id'] : '';
 
-                                    if ($result = $conn->query($sql)) {
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
+                                    if ($category_result && $category_result->num_rows > 0) {
+                                        // We need to rewind result pointer to iterate categories again
+                                        $category_result->data_seek(0);
+                                        while ($row = $category_result->fetch_assoc()) {
 
-                                                $isChecked = ($row["id"] == $selectedCategoryId) ? 'checked' : '';
-                                                echo '<li class="filter-item"><span><label for="filter-' . strtolower(str_replace(' ', '-', $row["name"])) . '"><input type="radio" name="category_id" value="' . $row["id"] . '" ' . $isChecked . ' onchange="this.form.submit()"> ' . $row["name"] . '</label></span></li>';
-                                            }
-                                        } else {
-                                            echo "Không có loại sản phẩm";
+                                            $isChecked = ($row["id"] == $selectedCategoryId) ? 'checked' : '';
+                                            echo '<li class="filter-item"><span><label for="filter-' . strtolower(str_replace(' ', '-', $row["name"])) . '"><input type="radio" name="category_id" value="' . $row["id"] . '" ' . $isChecked . ' onchange="this.form.submit()"> ' . $row["name"] . '</label></span></li>';
                                         }
                                     } else {
-                                        echo "Lỗi truy vấn: " . $conn->error;
+                                        echo "Không có loại sản phẩm";
                                     }
                                     ?>
                                 </ul>
@@ -418,7 +411,6 @@ $stmt->close();
                         </aside>
                     </form>
                     <script>
-
                         const checkboxes = document.querySelectorAll('.filter-item input[type="checkbox"]');
 
                         function uncheckOthers(currentCheckbox) {

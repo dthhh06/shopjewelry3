@@ -9,6 +9,7 @@ if (isset($_POST["login"])) {
 
     $useremail = $_POST["useremail"];
     $password = $_POST["password"];
+    
 
     $login = new LoginController($useremail, $password);
     $login->loginUser();

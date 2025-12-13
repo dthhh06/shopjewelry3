@@ -33,7 +33,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="header-inner">
 
         <!-- LEFT: LOCATION BUTTON -->
-        <a href="javascript:void(0)" class="icon-btn location-btn" title="Location">
+        <a href="javascript:void(0)" class="icon-btn search-btn" title="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <i class="fa-solid fa-location-dot"></i>
         </a>
 
@@ -54,10 +55,15 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="header-user-dropdown" id="userDropdown" role="menu" aria-hidden="true">
 
                     <?php if (!empty($_SESSION['id'])): ?>
-                        <a href="./customerinfo.php" class="ud-item">
-                            <i class="fa-solid fa-user"></i>
+                        <a href="./customerinfo.php" class="ud-item ud-user">
+                            <img
+                                src="<?= htmlspecialchars($_SESSION['avatar']) ?>"
+                                class="ud-avatar"
+                                alt="Avatar">
+
                             <span class="ud-text"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
                         </a>
+
                         <a href="../includes/logout.inc.php" class="ud-item">
                             <i class="fa-solid fa-power-off"></i>
                             <span class="ud-text">Đăng xuất</span>
@@ -75,27 +81,27 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endif; ?>
 
                 </div>
+
             </div>
 
             <!-- CART -->
             <a href="javascript:void(0)" class="shoppingcart icon-btn" title="Giỏ hàng" data-preserve-old-cart="1">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span class="quantity-badge"><?= $totalOfQuantiy ?></span>
+                <span class="quantity"><?= $totalOfQuantiy ?></span>
             </a>
-
         </div>
     </div>
 
     <!-- NAVIGATION -->
     <nav class="tiffany-nav" role="navigation" aria-label="Main Navigation">
-        <ul class="nav-list" >
+        <ul class="nav-list">
 
             <li class="nav-item">
                 <a href="../templates/trangchu.php" style="text-decoration: none !important;">TRANG CHỦ</a>
             </li>
 
-           <li class="item dropdown">
-                <a href="../templates/SanPham.php" class="text-decoration-none" >SẢN PHẨM</a>
+            <li class="item dropdown">
+                <a href="../templates/SanPham.php" class="text-decoration-none">SẢN PHẨM</a>
 
                 <ul class="child-list-items show-on-hover">
                     <?php if ($categories): ?>
@@ -113,7 +119,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </li>
 
             <li class="nav-item"><a href="../templates/gioithieu.php">GIỚI THIỆU</a></li>
-            <li class="nav-item"><a href="../templates/feedback.php">PHẢN HỒI</a></li>
+            <li class="nav-item"><a href="../templates/feedback.php">LIÊN HỆ</a></li>
 
         </ul>
     </nav>

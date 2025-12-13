@@ -14,7 +14,9 @@
 
 
     <!-- JQUERY -->
-    <script src="../public//assets/libs/jquery-3.7.1.min.js"></script>
+    <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
 
     <!-- Js -->
     <script src="../public/js/login.js" type="module"></script>

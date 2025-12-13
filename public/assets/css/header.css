@@ -48,13 +48,19 @@
     justify-content: space-between;
     gap: 12px;
 }
+/* left */
+.search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px; 
+}
 
 /* === LOGO === */
 .tiffany-logo {
     font-size: 3.2rem;
     text-decoration: none;
     display: flex;
-    align-items: center; /* fix chữ/logo thẳng hàng */
+    align-items: center; 
 }
 
 /* === RIGHT AREA === */
@@ -64,6 +70,10 @@
     gap: 30px;
     position: relative;
 }
+.shoppingcart {
+    position: relative;
+}
+
 
 .icon-btn {
     background: none;
@@ -72,9 +82,24 @@
     cursor: pointer;
     position: relative;
 }
+.ud-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ud-avatar {
+    width: 24px;         
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+
 
 /* badge cart - FIX KÍCH THƯỚC */
-.quantity-badge {
+.quantity {
     position: absolute;
     top: -6px;
     right: -10px;

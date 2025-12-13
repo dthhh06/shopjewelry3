@@ -1,3 +1,4 @@
+<?php include_once('./header.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,6 +47,23 @@
         z-index: -2;
     }
 
+.hero-content1 {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.hero-content1 h1 {
+    font-size: 64px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 3px;
+    margin-bottom: 18px; 
+    color: #f5e6b8; 
+}
+
     .contentt {
         font-family: "Dancing Script", Arial, Helvetica, sans-serif;
         width: 100%;
@@ -82,28 +100,6 @@
         margin-bottom: 1.5rem;
         color: #555;
     }
-
-    .btn {
-        padding: 0.7rem 2rem !important;
-        font-size: 0.95rem !important;
-        background: transparent !important;
-        color: #000000ff !important;
-        border: 2px solid #000 !important;
-        border-radius: 0 !important;
-        font-family: 'Cinzel', serif !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        display: inline-block !important;
-        text-decoration: none !important;
-    }
-
-    .btn:hover {
-        background: #000000ff !important;
-        color: white !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
-    }
-
     .img-responsive {
         border: 2px solid #f0e8daff !important;
         padding: 2px;
@@ -154,17 +150,26 @@
         unset($_SESSION['order_placed']);
     }
     ?>
-    <?php include_once('./header.php') ?>
+    <?php
+    require_once __DIR__ . '/../controllers/feedbackcontr.s.php';
 
+    $feedbackContr = new Feedbackcontr();
+    $feedbacks = $feedbackContr->getFeedbackHomeContr();
+    ?>
     <!-- Home Section -->
     <section class="home-section">
         <!-- Hero Section -->
         <div class="hero-wrapper">
-
             <video class="hero-video" autoplay muted loop>
                 <source src="../assets/imgs/banner/bg.mp4" type="video/mp4">
             </video>
+
+            <div class="hero-content1">
+                <h1>Love Is a Gift</h1>
+                <a href="SanPham.php" class="btn hero-btn">Shop Now</a>
+            </div>
         </div>
+
         <div class="contentt">
             <div class="hero-content">
                 <p class="hero-subtitle">EXQUISITE COLLECTION</p>
@@ -172,7 +177,7 @@
                 <p class="hero-description">
                     Khám phá những món trang sức thủ công của chúng tôi, được thiết kế tỉ mỉ để tôn vinh những khoảnh khắc quý giá nhất của cuộc sống với vẻ đẹp và sự tinh xảo không gì sánh bằng.
                 </p>
-                <a href="#" class="btn">Explore Collection</a>
+                <a href="SanPham.php" class="btn">Explore Collection</a>
             </div>
         </div>
 
@@ -193,51 +198,45 @@
             <div class="banner-content">
                 <h2 class="banner-title">The Autumn Collection</h2>
                 <p class="banner-text">Tận hưởng sự ấm áp của mùa này với bộ sưu tập mới nhất của chúng tôi, với tông màu vàng rực rỡ và đá quý tinh tế, lưu giữ bản chất của mùa thu.</p>
-                <a href="#" class="btn btn-light">Discover Now</a>
+                <a href="SanPham.php" class="btn btn-light">Discover Now</a>
             </div>
         </div>
 
         <!-- Testimonials -->
-        <div class="testimonials">
-            <h2 class="section-title">Client Testimonials</h2>
+        <section class="testimonials">
+            <h2 class="section-title">Customer Feedback</h2>
+
             <div class="testimonial-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"
-                        Tay nghề chế tác chiếc nhẫn đính hôn của tôi vượt xa mọi mong đợi.
-                        Sự tỉ mỉ đến từng chi tiết thật đáng kinh ngạc, và tôi nhận được lời khen ngợi ở mọi nơi tôi đến."</p>
-                    <div class="testimonial-author">
-                        <img src="../assets/imgs/banner/women2.jpg" alt="Sarah Johnson" class="author-image">
-                        <div>
-                            <p class="author-name">Sarah Johnson</p>
-                            <p class="author-title">Client since 2021</p>
-                        </div>
-                    </div>
-                </div>
+                <?php if (!empty($feedbacks)): ?>
+                    <?php foreach ($feedbacks as $fb): ?>
+                        <div class="testimonial-card">
+                            <p class="testimonial-text" style="font-family: Dancing Script !important;">
+                                “<?= htmlspecialchars($fb['content'] ?? '') ?>”
+                            </p>
 
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Tôi đã mua nhiều món đồ từ tiệm kim hoàn này trong nhiều năm qua.
-                        Mỗi món đồ đều kể một câu chuyện và mang giá trị tình cảm. Chất lượng của chúng là vô song."</p>
-                    <div class="testimonial-author">
-                        <img src="../assets/imgs/banner/men1.jpg" alt="Michael Thompson" class="author-image">
-                        <div>
-                            <p class="author-name">Michael Thompson</p>
-                            <p class="author-title">Client since 2018</p>
-                        </div>
-                    </div>
-                </div>
+                            <div class="testimonial-author">
+                                <img
+                                    src="<?= !empty($fb['avatar'])
+                                                ? htmlspecialchars($fb['avatar'])
+                                                : '/assets/imgs/user.jpg' ?>"
+                                    class="author-image"
+                                    alt="<?= htmlspecialchars($fb['fullname'] ?? 'Customer') ?>">
 
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Dịch vụ thiết kế riêng đã cho phép tôi tạo ra một món quà kỷ niệm thực sự độc đáo cho vợ tôi. Các nhà thiết kế đã nắm bắt chính xác những gì tôi hình dung."</p>
-                    <div class="testimonial-author">
-                        <img src="../assets/imgs/banner/women1.jpg" alt="Jimes Wilsony" class="author-image">
-                        <div>
-                            <p class="author-name">James Wilson</p>
-                            <p class="author-title">Client since 2020</p>
+                                <div>
+                                    <div class="author-name">
+                                        <?= htmlspecialchars($fb['fullname'] ?? 'Anonymous') ?>
+                                    </div>
+                                    <div class="author-title">Verified Customer</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-center">No feedback yet.</p>
+                <?php endif; ?>
             </div>
-        </div>
+        </section>
+
 
 
 
@@ -251,14 +250,14 @@
                 <h2 class="section-title">Our Story</h2>
                 <p class="story-paragraph">
                     Tại Aurelia, chúng tôi tin rằng mỗi món trang sức đều kể một câu chuyện — về tình yêu, di sản và nghệ thuật.
-Trong hơn hai thập kỷ, chúng tôi đã chế tác thủ công những thiết kế vượt thời gian, tôn vinh những khoảnh khắc
-quan trọng nhất. Đội ngũ nghệ nhân lành nghề của chúng tôi kết hợp kỹ thuật thủ công truyền thống với
-sự thanh lịch hiện đại, chỉ sử dụng những vật liệu tốt nhất có nguồn gốc đạo đức.
+                    Trong hơn hai thập kỷ, chúng tôi đã chế tác thủ công những thiết kế vượt thời gian, tôn vinh những khoảnh khắc
+                    quan trọng nhất. Đội ngũ nghệ nhân lành nghề của chúng tôi kết hợp kỹ thuật thủ công truyền thống với
+                    sự thanh lịch hiện đại, chỉ sử dụng những vật liệu tốt nhất có nguồn gốc đạo đức.
                 </p>
                 <p class="story-paragraph">
                     Từ bản phác thảo đầu tiên đến bản hoàn thiện cuối cùng, mỗi tác phẩm là minh chứng cho cam kết của chúng tôi về sự xuất sắc. Chúng tôi mời bạn khám phá một thế giới nơi đam mê hòa quyện cùng sự chính xác.
                 </p>
-                <a href="#" class="btn">Learn More</a>
+                <a href="gioithieu.php" class="btn">Learn More</a>
             </div>
             <div class="story-image-container">
                 <img src="../assets/imgs/banner/story.jpg" alt="Jewelry craftsmanship at Aurelia" class="story-image">
@@ -275,7 +274,7 @@ sự thanh lịch hiện đại, chỉ sử dụng những vật liệu tốt nh
             <p class="about-paragraph">
                 Với cam kết về nguồn cung ứng có đạo đức và độ chính xác thủ công, các bộ sưu tập của chúng tôi không chỉ phản ánh sự sang trọng — mà còn phản ánh di sản. Từ nhẫn đính hôn được thiết kế riêng đến trang sức tinh xảo hàng ngày, chúng tôi chế tác từng
             </p>
-            <a href="#" class="btn">Explore the Collection</a>
+            <a href="gioithieu.php" class="btn">Explore the Collection</a>
         </div>
     </section>
 
@@ -313,10 +312,10 @@ sự thanh lịch hiện đại, chỉ sử dụng những vật liệu tốt nh
     <!-- Newsletter -->
     <div class="newsletter">
         <h2 class="newsletter-title">Join Our Newsletter</h2>
-        <p class="newsletter-text">Đăng ký để nhận thông tin cập nhật về bộ sưu tập mới, ưu đãi độc quyền và nguồn cảm hứng về phong cách.</p>
+        <p class="newsletter-text" style="  font-family: Dangcing_script !important;">Đăng ký để nhận thông tin cập nhật về bộ sưu tập mới, ưu đãi độc quyền và nguồn cảm hứng về phong cách.</p>
         <form class="newsletter-form">
             <input type="email" placeholder="Your email address" class="newsletter-input" required>
-            <button type="submit" class="newsletter-btn">Subscribe</button>
+            <button type="submit" class="btn">Subscribe</button>
         </form>
     </div>
 
