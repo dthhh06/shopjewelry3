@@ -54,4 +54,9 @@ $adminAvatar = "../assets/imgs/admin/admin.jpg";
         </li>
     </ul>
 </nav>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  console.log(typeof bootstrap); // phải ra "object"
+});
+</script>
 
