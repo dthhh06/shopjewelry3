@@ -55,14 +55,20 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="header-user-dropdown" id="userDropdown" role="menu" aria-hidden="true">
 
                     <?php if (!empty($_SESSION['id'])): ?>
-                        <a href="./customerinfo.php" class="ud-item ud-user">
-                            <img
-                                src="<?= htmlspecialchars($_SESSION['avatar']) ?>"
-                                class="ud-avatar"
-                                alt="Avatar">
 
+                        <!-- User info -->
+                        <a href="./customerinfo.php" class="ud-item ud-user">
+                            <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>" class="ud-avatar" alt="Avatar">
                             <span class="ud-text"><?= htmlspecialchars($_SESSION['fullname']) ?></span>
                         </a>
+
+                        <!-- QUẢN LÝ (role 1,2,4) -->
+                        <?php if (in_array($_SESSION['role_id'], [1, 2, 4])): ?>
+                            <a href="../admin/index.php" class="ud-item">
+                                <i class="fa-solid fa-gear"></i>
+                                <span class="ud-text">Trang quản lý</span>
+                            </a>
+                        <?php endif; ?>
 
                         <a href="../includes/logout.inc.php" class="ud-item">
                             <i class="fa-solid fa-power-off"></i>
@@ -70,18 +76,20 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
 
                     <?php else: ?>
+
                         <a href="../templates/login.php" class="ud-item">
                             <i class="fa-solid fa-user-plus"></i>
                             <span class="ud-text">Đăng nhập</span>
                         </a>
+
                         <a href="../templates/signup.php" class="ud-item">
                             <i class="fa-solid fa-right-from-bracket"></i>
                             <span class="ud-text">Đăng ký</span>
                         </a>
+
                     <?php endif; ?>
 
                 </div>
-
             </div>
 
             <!-- CART -->

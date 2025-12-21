@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>AURELLIA index</title>
@@ -19,7 +20,7 @@
 
         <div id="layoutSidenav_content">
             <main class="p-4">
-                <?php include $view; ?>  <!-- load nội dung của từng trang -->
+                <?php include $view; ?> <!-- load nội dung của từng trang -->
             </main>
 
             <?php include "footer.php"; ?>
@@ -31,4 +32,5 @@
     <script src="assets/js/scripts.js"></script>
 
 </body>
+
 </html>

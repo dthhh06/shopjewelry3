@@ -15,12 +15,12 @@
     <link rel="stylesheet" href="../public/assets/icons/css/all.min.css">
 
     <!-- JQUERY -->
-    <script src="../public/assets/libs/jquery-3.7.1.min.js"></script>
+    <!-- <script src="../public/assets/libs/jquery-3.7.1.min.js"></script> -->
     <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" /> -->
 
     <!-- JS -->
-    <script src="../public/js/cart.js" defer></script>
+    <!-- <script src="../public/js/cart.js" defer></script> -->
 </head>
 <style>
     .story-text-block {
