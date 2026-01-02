@@ -16,23 +16,6 @@
         </select>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label>Giá</label>
-            <input name="price" type="number" class="form-control" required>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <label>Giảm (%)</label>
-            <input name="discount" type="number" value="0" class="form-control">
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <label>Số lượng</label>
-            <input name="quantity" type="number" value="1" class="form-control">
-        </div>
-    </div>
-
     <div class="mb-3">
         <label>Ảnh sản phẩm (1)</label>
         <input type="file" name="thumbnail" class="form-control">

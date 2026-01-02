@@ -209,80 +209,55 @@ switch ($act) {
         $c = new ImportController($conn);
         $c->delete();
         break;
-
-    case "roles":
-        require "controllers/RoleController.php";
+    case "import-detail":
+        require "controllers/ImportController.php";
+        $c = new ImportController($conn);
+        $c->detail();
+        break;
+    case 'stock':
+        require "controllers/StockController.php";
+        $c = new StockController($conn);
+        $c->index();
+        break;
+    case 'role':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->index();
         break;
 
-    case "role-create":
-        require "controllers/RoleController.php";
+    case 'role-create':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->create();
         break;
 
-    case "role-store":
-        require "controllers/RoleController.php";
+    case 'role-store':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->store();
         break;
 
-    case "role-edit":
-        require "controllers/RoleController.php";
+    case 'role-edit':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->edit();
         break;
 
-    case "role-update":
-        require "controllers/RoleController.php";
+    case 'role-update':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->update();
         break;
 
-    case "role-delete":
-        require "controllers/RoleController.php";
+    case 'role-delete':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->delete();
         break;
 
-    case "role-permissions":
-        require "controllers/RoleController.php";
+    case 'role-permissions':
+        require_once __DIR__ . '/controllers/RoleController.php';
         (new RoleController($conn))->permissions();
         break;
 
-    case "role-save-permissions":
-        require "controllers/RoleController.php";
-        (new RoleController($conn))->savePermissions();
-        break;
-    case "galleries":
+case 'galleries':
         require "controllers/GalleryController.php";
         $c = new GalleryController($conn);
         $c->index();
-        break;
-
-    case "galleries-create":
-        require "controllers/GalleryController.php";
-        $c = new GalleryController($conn);
-        $c->create();
-        break;
-
-    case "galleries-store":
-        require "controllers/GalleryController.php";
-        $c = new GalleryController($conn);
-        $c->store();
-        break;
-
-    case "galleries-edit":
-        require "controllers/GalleryController.php";
-        $c = new GalleryController($conn);
-        $c->edit();
-        break;
-
-    case "galleries-update":
-        require "controllers/GalleryController.php";
-        $c = new GalleryController($conn);
-        $c->update();
-        break;
-
-    case "galleries-delete":
-        require "controllers/GalleryController.php";
-        $c = new GalleryController($conn);
-        $c->delete();
         break;
 
     case "contact":

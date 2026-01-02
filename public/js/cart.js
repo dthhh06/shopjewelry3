@@ -1,386 +1,223 @@
 $(document).ready(function () {
-  // Move on to the payment page
-  $("button[name='btn-placeorder']")
-    .unbind("click")
-    .click(() => (window.location.href = "../templates/payment.php"));
+  // =================================== CÁC HÀM HỖ TRỢ ===================================
 
-  $(".product-item .product-img, button[name='add_product_to_cart']")
-    .off("click")
-    .click(function () {
-      let productid = null;
-      if ($(this).hasClass("product-img")) {
-        productid = $(this).closest(".product-item").data("productid");
-      } else if ($(this).attr("name") === "add_product_to_cart") {
-        productid = $(this).closest(".productdetail-item").data("productid");
-      }
 
-      if (productid) {
-        handleAddProductToCart(productid);
-        sideEffectOfCart();
-      } else {
-        console.log("Product ID not found.");
-      }
-    });
-
-  $(".shoppingcart").unbind("click").click(sideEffectOfCart);
-
-  // Format vnd currency
   function formatVndPrice(price) {
     return price.toLocaleString("it-IT", { style: "currency", currency: "VND" });
   }
 
-  function handleAddProductToCart(productId) {
-    $.ajax({
-      type: "POST",
-      url: "../includes/cart.inc.php",
-      data: { productId, type: "addToCart" },
-      success: function (response) {
-        if (response) {
-          // const productList = JSON.parse(response);
-          const productList = Object.values(JSON.parse(response));
-          const productInCartObj = $(".product_in_cart");
-          let totalOfOrder = 0;
-          let totalOfProducts = 0;
+  // Render lại toàn bộ giỏ hàng từ danh sách sản phẩm nhận được từ server
+  function renderCart(productList, highlightProductId = null) {
+    const $productInCart = $(".product_in_cart");
+    const $subheaderCart = $("#popuppanel__subheader_cart");
+    const $totalOrder = $("#total_or_order");
+    const $quantityBadge = $(".quantity");
 
-          const indexOfNewProduct = productList.findIndex((product) => productId === product.id);
-          const titleOfNewProduct = productList[indexOfNewProduct].title;
-
-          const html = productList.map((product, index) => {
-            const totalPriceOfproduct = Number(product.customer_quantity) * Number(product.price);
-            totalOfOrder += totalPriceOfproduct;
-            totalOfProducts += Number(product.customer_quantity);
-
-            return `
-            <tr data-productid=${product.id} data-productindex="${index}">
-              <td class="d-flex align-items-start">
-                  <img src="${product.thumbnail}" alt="" class="img-responsive border" style="width: 80px">
-                  <div class="d-inline-flex flex-column justify-content-start align-items-start ms-2">
-                      <span style="font-size: 14px; font-weight: 600; color: #d4af37;" class="mb-2">${product.title}</span>
-                      <span style="font-size: 12px; font-weight: 500; color: #aaa; cursor: pointer" class="remove-product"><i class="fa-solid fa-close me-1 mb-2" style="font-weight: 900; font-size: 14px"></i>Bỏ sản phẩm</span>
-                      ${
-                        productId === product.id
-                          ? `
-                      <span style=" color: #898989; font-size: 14px">
-                        <i class="fa-solid fa-check me-1" style="color: #d4af37; font-weight: 900; font-size: 14px"></i>Sản phẩm vừa thêm!
-                      </span>`
-                          : ""
-                      }
-                  </div>
-              </td>
-              <td class="text-center product-price" data-productprice="${product.price}" style="font-size: 14px; font-weight: 600; color: #d4af37;">${formatVndPrice(Number(product.price))}</td>
-              <td class="text-center">
-                <div>
-                    <button type="button" class="minus">-</button>
-                    <input type="number" name="quantity" disabled="disabled" style="min-width: 50px;" value="${product.customer_quantity}">
-                    <button type="button" class="plus">+</button>
-                </div>
-                <div class="text-muted in-stock" style="font-size: 12px;" data-instock="${product.quantity}">
-                      In stock: ${product.quantity}
-                </div>
-              </td>
-              <td class="text-center total-price" style="font-size: 14px; font-weight: 600; color: #d4af37;">${formatVndPrice(Number(totalPriceOfproduct))}</td>
-            </tr>
-            `;
-          });
-
-          // Side effect
-          $("#popuppanel__header_title > span").text(`${titleOfNewProduct}`);
-          $("#popuppanel__subheader_cart").text(`Giỏ hàng của bạn (${totalOfProducts}) sản phẩm`);
-          $("#total_or_order").text(formatVndPrice(Number(totalOfOrder)));
-          $(".quantity").text(`${totalOfProducts}`);
-
-          productInCartObj.html(html.join(""));
-
-          // Set value for quantity
-          const plusBtn = $("button.plus");
-          const minusBtn = $("button.minus");
-          const quantityInput = $("input[name='quantity']");
-
-          plusBtn.unbind("click").click(function (event) {
-            event.preventDefault();
-            const quantityInput = $(this).siblings("input[name='quantity']");
-            const currentValue = Number(quantityInput.val()) || 1;
-            quantityInput.val(currentValue + 1);
-            updateTotalPrice($(this));
-
-            const productObj = $(this).closest("tr");
-            changeQuantity(productObj, quantityInput.val(), quantityInput);
-          });
-
-          minusBtn.unbind("click").click(function (event) {
-            event.preventDefault();
-            const quantityInput = $(this).siblings("input[name='quantity']");
-            const currentValue = Number(quantityInput.val()) || 1;
-            quantityInput.val(currentValue - 1);
-            updateTotalPrice($(this));
-
-            const productObj = $(this).closest("tr");
-            changeQuantity(productObj, quantityInput.val(), quantityInput);
-          });
-
-          quantityInput.on("input", function () {
-            updateTotalPrice($(this));
-
-            const productObj = $(this).closest("tr");
-            changeQuantity(productObj, quantityInput.val(), quantityInput);
-          });
-
-          // remove product from the cart
-          productInCartObj.off("click", ".remove-product").on("click", ".remove-product", function () {
-            const productObj = $(this).closest("tr");
-            handleRemoveProduct(productObj);
-          });
-        }
-      },
-    });
-  }
-
-  function sideEffectOfCart() {
-    const popupcartObj = $(".popupcart");
-    const popupcartOverlayObj = $(".overlay");
-
-    popupcartObj.removeClass("d-none").addClass("d-block");
-    popupcartOverlayObj.removeClass("d-none").addClass("d-block");
-
-    $(".overlay, .popupcart_close")
-      .unbind("click")
-      .click(() => {
-        popupcartObj.removeClass("d-block").addClass("d-none");
-        popupcartOverlayObj.removeClass("d-block").addClass("d-none");
-      });
-  }
-
-  function updateTotalPrice(button) {
-    const totalPriceCell = button.closest("tr").find(".total-price");
-    const pricePerUnit = Number(button.closest("tr").find(".product-price").data("productprice"));
-    if (button.attr("type") === "number") {
-      var quantityInput = button;
-    } else {
-      var quantityInput = button.siblings("input[name='quantity']");
+    if (!productList || productList.length === 0) {
+      $productInCart.html(
+        '<tr><td colspan="4" class="text-center">Không có sản phẩm nào trong giỏ hàng. Quay lại <a href="../templates/SanPham.php" style="color: #d4af37">cửa hàng</a> để tiếp tục mua sắm.</td></tr>'
+      );
+      $subheaderCart.text("Giỏ hàng của bạn (0) sản phẩm");
+      $totalOrder.text("0₫");
+      $quantityBadge.text("0");
+      return;
     }
-    const quantity = Number(quantityInput.val() || 1);
-    const totalPrice = formatVndPrice(Number(pricePerUnit * quantity));
 
-    totalPriceCell.text(totalPrice);
+    let totalOrder = 0;
+    let totalProducts = 0;
+
+    const rows = productList.map((product) => {
+      const totalPrice = Number(product.price) * Number(product.customer_quantity);
+      totalOrder += totalPrice;
+      totalProducts += Number(product.customer_quantity);
+
+      const isNew = highlightProductId && product.id === highlightProductId;
+
+      return `
+        <tr data-productid="${product.id}">
+          <td class="d-flex align-items-start">
+            <img src="${product.thumbnail}" alt="" class="img-responsive border" style="width: 80px">
+            <div class="d-inline-flex flex-column justify-content-start align-items-start ms-2">
+              <span style="font-size: 14px; font-weight: 600; color: #d4af37;" class="mb-2">${product.title}</span>
+              <span style="font-size: 12px; font-weight: 500; color: #aaa; cursor: pointer" class="remove-product">
+                <i class="fa-solid fa-close me-1 mb-2" style="font-weight: 900; font-size: 14px"></i>Bỏ sản phẩm
+              </span>
+              ${isNew ? '<span style="color: #898989; font-size: 14px"><i class="fa-solid fa-check me-1" style="color: #d4af37; font-weight: 900; font-size: 14px"></i>Sản phẩm vừa thêm!</span>' : ""}
+            </div>
+          </td>
+          <td class="text-center product-price" data-productprice="${product.price}" style="font-size: 14px; font-weight: 600; color: #d4af37;">
+            ${formatVndPrice(Number(product.price))}
+          </td>
+          <td class="text-center">
+            <div>
+              <button type="button" class="minus">-</button>
+              <input type="number" name="quantity" disabled style="min-width: 50px;" value="${product.customer_quantity}">
+              <button type="button" class="plus">+</button>
+            </div>
+            <div class="text-muted in-stock" style="font-size: 12px;" data-instock="${product.quantity}">
+              In stock: ${product.quantity}
+            </div>
+          </td>
+          <td class="text-center total-price" style="font-size: 14px; font-weight: 600; color: #d4af37;">
+            ${formatVndPrice(totalPrice)}
+          </td>
+        </tr>`;
+    }).join("");
+
+    $productInCart.html(rows);
+    $subheaderCart.text(`Giỏ hàng của bạn (${totalProducts}) sản phẩm`);
+    $totalOrder.text(formatVndPrice(totalOrder));
+    $quantityBadge.text(totalProducts);
+
+    attachQuantityEvents();
+    attachRemoveEvents();
   }
 
-  function handleRemoveProduct(productObj) {
-    const productId = productObj.data("productid");
-    $.ajax({
-      type: "POST",
-      url: "../includes/cart.inc.php",
-      data: { productId, type: "removeFromCart" },
-      success: function (response) {
-        if (response !== "0") {
-          const productList = Object.values(JSON.parse(response));
-          productObj.remove(); // remove the product from the cart UI
+  // Gắn sự kiện cho nút +/- và input số lượng
+  function attachQuantityEvents() {
+    $(".plus").off("click").on("click", function () {
+      const $input = $(this).siblings("input[name='quantity']");
+      const newVal = Number($input.val()) + 1;
+      $input.val(newVal);
+      updateRowTotal($(this));
+      updateCartQuantity($(this).closest("tr"), newVal);
+    });
 
-          let totalOfProducts = 0;
+    $(".minus").off("click").on("click", function () {
+      const $input = $(this).siblings("input[name='quantity']");
+      const newVal = Math.max(1, Number($input.val()) - 1);
+      $input.val(newVal);
+      updateRowTotal($(this));
+      updateCartQuantity($(this).closest("tr"), newVal);
+    });
 
-          const totalOfOrder = productList.reduce((total, product) => {
-            totalOfProducts += Number(product.customer_quantity);
-            return total + Number(product.price) * Number(product.customer_quantity);
-          }, 0);
-
-          // Side effect
-          $("#popuppanel__subheader_cart").text(`Giỏ hàng của bạn (${totalOfProducts}) sản phẩm`);
-          $("#total_or_order").text(totalOfOrder);
-        } else if (response === "0") {
-          alert("Failed");
-        }
-      },
-      error: function (error) {
-        alert("Error occured while removing the product");
-      },
+    $("input[name='quantity']").off("input").on("input", function () {
+      let val = Number($(this).val()) || 1;
+      if (val < 1) val = 1;
+      $(this).val(val);
+      updateRowTotal($(this));
+      updateCartQuantity($(this).closest("tr"), val);
     });
   }
 
-  function changeQuantity(productObj, customer_quantity, maxQuantity) {
-    const productId = productObj.data("productid");
-    $.ajax({
-      type: "POST",
-      url: "../includes/cart.inc.php",
-      data: { productId, customer_quantity, type: "changeQuantity" },
-      success: function (response) {
-        if (customer_quantity == 0) {
-          productObj.remove();
-        }
-        let quantity = 0;
+  // Gắn sự kiện xóa sản phẩm
+  function attachRemoveEvents() {
+    $(".remove-product").off("click").on("click", function () {
+      const $row = $(this).closest("tr");
+      removeFromCart($row);
+    });
+  }
+
+  // Cập nhật thành tiền của dòng
+  function updateRowTotal(element) {
+    const $row = element.closest("tr");
+    const price = Number($row.find(".product-price").data("productprice"));
+    const qty = Number($row.find("input[name='quantity']").val());
+    $row.find(".total-price").text(formatVndPrice(price * qty));
+  }
+
+  // Mở popup giỏ hàng
+  function openCartPopup() {
+    $(".popupcart, .overlay").removeClass("d-none").addClass("d-block");
+  }
+
+  // Đóng popup giỏ hàng
+  function closeCartPopup() {
+    $(".popupcart, .overlay").removeClass("d-block").addClass("d-none");
+  }
+
+  // =================================== CÁC HÀNH ĐỘNG CHÍNH ===================================
+
+  // Nút tiến hành đặt hàng
+  $("button[name='btn-placeorder']").off("click").on("click", () => {
+    window.location.href = "../templates/payment.php";
+  });
+
+  // Thêm sản phẩm vào giỏ (từ nút hoặc ảnh sản phẩm)
+  $(".product-item .product-img, button[name='add_product_to_cart']").off("click").on("click", function () {
+    let productId = null;
+    if ($(this).hasClass("product-img")) {
+      productId = $(this).closest(".product-item").data("productid");
+    } else {
+      productId = $(this).closest(".productdetail-item").data("productid");
+    }
+
+    if (productId) {
+      addToCart(productId);
+      openCartPopup();
+    }
+  });
+
+  // Mở giỏ hàng khi click icon giỏ hàng
+  $(".shoppingcart").off("click").on("click", function () {
+    openCartPopup();
+    loadCart(); // load lại để chắc chắn dữ liệu mới nhất
+  });
+
+  // Đóng popup
+  $(document).on("click", ".cart-close-btn, .overlay", closeCartPopup);
+
+  // =================================== AJAX FUNCTIONS ===================================
+
+  // Thêm sản phẩm
+  function addToCart(productId) {
+    $.post("../includes/cart.inc.php", { productId, type: "addToCart" }, function (response) {
+      if (response) {
         const productList = Object.values(JSON.parse(response));
-        const totalOfOrder = productList.reduce((total, product) => {
-          quantity += Number(product.customer_quantity);
-          return total + Number(product.price) * Number(product.customer_quantity);
-        }, 0);
-
-        // Side effect
-        $("#popuppanel__subheader_cart").text(`Giỏ hàng của bạn (${customer_quantity}) sản phẩm`);
-        $("#total_or_order").text(formatVndPrice(Number(totalOfOrder)));
-        updateQuantityOfCart(quantity);
-        if (quantity === 0) {
-          handleCartEmpty(productList);
-        }
-
-        if (maxQuantity) {
-          console.log(maxQuantity);
-          const inputObj = $(maxQuantity).closest("td").find(".in-stock");
-          if (inputObj) {
-            const maxQuantityValue = Number(inputObj.data("instock"));
-            if (maxQuantity.val() >= maxQuantityValue) {
-              maxQuantity.val(maxQuantityValue);
-              maxQuantity.siblings(".plus").attr("disabled", "disabled");
-            } else {
-              maxQuantity.siblings(".plus").removeAttr("disabled");
-            }
-          } else {
-            console.log("Element not found");
-          }
-        }
-      },
+        const newProduct = productList.find(p => p.id === productId);
+        $("#popuppanel__header_title > span").text(newProduct.title);
+        renderCart(productList, productId);
+      }
     });
   }
 
-  function handleCartEmpty(productList) {
-    $(".product_in_cart").html("<td colspan='4'>Không có sản phẩm nào trong giỏ hàng. Quay lại<a href='../templates/SanPham.php' style='color: #d4af37'>cửa hàng</a>để tiếp tục mua sắm.</td>");
-  }
-
-  function updateQuantityOfCart(quantity) {
-    $(".quantity").text(quantity);
-    $("#popuppanel__subheader_cart").text(`Giỏ hàng của bạn (${quantity}) sản phẩm`);
-  }
-
-  // See the products in the cart
-  $(".shoppingcart")
-    .unbind("click")
-    .click(function () {
-      sideEffectOfCart();
-      seeCart();
+  // Xem giỏ hàng
+  function loadCart() {
+    $.get("../includes/seeProductInCart.inc.php", function (response) {
+      if (response && response !== "none") {
+        const productList = Object.values(JSON.parse(response));
+        renderCart(productList);
+      } else {
+        renderCart([]);
+      }
     });
+  }
 
-  function seeCart() {
-    $.ajax({
-      type: "GET",
-      data: {},
-      url: "../includes/seeProductInCart.inc.php",
-      success: function (response) {
-        if (response !== "none") {
-          const productList = Object.values(JSON.parse(response));
-          console.log(productList);
-          const productInCartObj = $(".product_in_cart");
+  // Xóa sản phẩm
+  function removeFromCart($row) {
+    const productId = $row.data("productid");
+    $.post("../includes/cart.inc.php", { productId, type: "removeFromCart" }, function (response) {
+      if (response && response !== "0") {
+        const productList = Object.values(JSON.parse(response));
+        renderCart(productList);
+      }
+    });
+  }
 
-          if (productList) {
-            let totalOfOrder = 0;
-            let totalOfProducts = 0;
+  // Thay đổi số lượng
+  function updateCartQuantity($row, newQuantity) {
+    const productId = $row.data("productid");
+    const $input = $row.find("input[name='quantity']");
+    const stock = Number($row.find(".in-stock").data("instock"));
 
-            const html = productList
-              .map((product, index) => {
-                const totalPriceOfproduct = Number(product.customer_quantity) * Number(product.price);
-                totalOfOrder += totalPriceOfproduct;
-                totalOfProducts += Number(product.customer_quantity);
+    // Disable nút + nếu đạt stock
+    if (newQuantity >= stock) {
+      $row.find(".plus").attr("disabled", "disabled");
+      $input.val(stock);
+      newQuantity = stock;
+    } else {
+      $row.find(".plus").removeAttr("disabled");
+    }
 
-                return `
-                <tr data-productid=${product.id} data-productindex="${index}">
-                  <td class="d-flex align-items-start">
-                      <img src="${product.thumbnail}" alt="" class="img-responsive border" style="width: 80px">
-                      <div class="d-inline-flex flex-column justify-content-start align-items-start ms-2">
-                          <span style="font-size: 14px; font-weight: 600; color: #d4af37;" class="mb-2">${product.title}</span>
-                          <span style="font-size: 12px; font-weight: 500; color: #aaa; cursor: pointer" class="remove-product"><i class="fa-solid fa-close me-1 mb-2" style="font-weight: 900; font-size: 14px"></i>Bỏ sản phẩm</span>
-                      </div>
-                  </td>
-                  <td class="text-center product-price" data-productprice="${product.price}" style="font-size: 14px; font-weight: 600; color: #d4af37;">${formatVndPrice(Number(product.price))}</td>
-                  <td class="text-center">
-                    <div>
-                        <button type="button" class="minus">-</button>
-                        <input type="number" name="quantity" disabled="disabled" style="min-width: 50px;" value="${product.customer_quantity}">
-                        <button type="button" class="plus">+</button>
-                    </div>
-                    <div class="text-muted in-stock" style="font-size: 12px;" data-instock="${product.quantity}">
-                      In stock: ${product.quantity}
-                    </div>
-                  </td>
-                  <td class="text-center total-price" style="font-size: 14px; font-weight: 600; color: #d4af37;">${formatVndPrice(Number(totalPriceOfproduct))}</td>
-                </tr>
-            `;
-              })
-              .join("");
-
-            // Side effect
-            $("#popuppanel__subheader_cart").text(`Giỏ hàng của bạn (${totalOfProducts}) sản phẩm`);
-            $("#total_or_order").text(formatVndPrice(Number(totalOfOrder)));
-            $(".quantity").text(`${totalOfProducts}`);
-
-            productInCartObj.html(html);
-
-            // Set value for quantity
-            const plusBtn = $("button.plus");
-            const minusBtn = $("button.minus");
-            const quantityInput = $("input[name='quantity']");
-
-            plusBtn.unbind("click").click(function (event) {
-              event.preventDefault();
-              const quantityInput = $(this).siblings("input[name='quantity']");
-              const currentValue = Number(quantityInput.val()) || 1;
-              quantityInput.val(currentValue + 1);
-              updateTotalPrice($(this));
-
-              const productObj = $(this).closest("tr");
-              changeQuantity(productObj, quantityInput.val(), quantityInput);
-            });
-
-            minusBtn.unbind("click").click(function (event) {
-              event.preventDefault();
-              const quantityInput = $(this).siblings("input[name='quantity']");
-              const currentValue = Number(quantityInput.val()) || 1;
-              quantityInput.val(currentValue - 1);
-              updateTotalPrice($(this));
-
-              const productObj = $(this).closest("tr");
-              changeQuantity(productObj, quantityInput.val(), quantityInput);
-            });
-
-            quantityInput.on("input", function () {
-              updateTotalPrice($(this));
-
-              const productObj = $(this).closest("tr");
-              changeQuantity(productObj, quantityInput.val(), quantityInput);
-            });
-
-            // remove product from the cart
-            productInCartObj.off("click", ".remove-product").on("click", ".remove-product", function () {
-              const productObj = $(this).closest("tr");
-              handleRemoveProduct(productObj)
-            });
-          }
+    $.post("../includes/cart.inc.php", { productId, customer_quantity: newQuantity, type: "changeQuantity" }, function (response) {
+      if (response) {
+        const productList = Object.values(JSON.parse(response));
+        if (newQuantity == 0) {
+          renderCart(productList);
+        } else {
+          renderCart(productList);
         }
-      },
+      }
     });
   }
 });
-// //=== thêm vào cart===
-// $(document).ready(function() {
-//     $('.cart-btn').click(function(e) {
-//         e.preventDefault();
-//         var productId = $(this).data('productid');
-
-//         $.ajax({
-//             url: 'add_to_cart.php', 
-//             method: 'POST',
-//             data: { id: productId },
-//             success: function(response) {
-//                 alert('Đã thêm sản phẩm vào giỏ hàng!');
-//             },
-//             error: function() {
-//                 alert('Lỗi thêm sản phẩm vào giỏ hàng.');
-//             }
-//         });
-//     });
-// });
-
-// $(document).ready(function(){
-//     $('.cart-btn').click(function(){
-//         let productId = $(this).data('productid');
-//         // Gọi ajax thêm giỏ hàng
-//         addToCart(productId);
-//     });
-// });
-
-

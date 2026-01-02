@@ -1,90 +1,71 @@
-<h1 class="mt-4">Phân quyền cho vai trò: <?= $role['name'] ?></h1>
+<h1 class="mt-4">Phân quyền cho Role: <strong><?= htmlspecialchars($role['name']) ?></strong></h1>
 
-<form action="index.php?act=role-save-permissions" method="POST">
-
-<input type="hidden" name="role_id" value="<?= $role['id'] ?>">
-
-<?php
-$modules = [];  // modules[moduleName][action] = permission row
-while ($p = $permissions->fetch_assoc()) {
-
-    if (!isset($p['name']) || strpos($p['name'], '.') === false) continue;
-
-    list($module, $action) = explode('.', $p['name']);
-
-    if (!isset($modules[$module])) $modules[$module] = [];
-
-    $modules[$module][$action] = $p;
-}
-?>
-
-<div class="card">
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-key me-1"></i>
+        Phân quyền chi tiết
+    </div>
     <div class="card-body">
 
-        <table class="table table-bordered text-center">
-            <thead>
-            <tr>
-                <th>Chức năng (Module)</th>
-                <th>Add</th>
-                <th>Edit</th>
-                <th>Delete</th>
-                <th>See</th>
-            </tr>
-            </thead>
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                Cập nhật phân quyền thành công!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
 
-            <tbody>
+        <form action="index.php?act=role-permissions&id=<?= $role['id'] ?>" method="POST">
 
-            <?php foreach ($modules as $module => $actions) { ?>
-                <tr>
-                    <td class="text-start">
-                        <strong><?= ucfirst($module) ?></strong>
-                        <br>
-                        <small class="text-muted">
-                            <?= $actions['view']['description'] ?? $actions['add']['description'] ?? '' ?>
-                        </small>
-                    </td>
+            <?php 
+            $currentGroup = '';
+            foreach ($permissions as $perm): 
+                // Khi chuyển sang group mới
+                if ($currentGroup !== $perm['group_name']): 
+                    // Đóng group cũ nếu có
+                    if ($currentGroup !== ''): 
+                        echo '</div></div>'; // đóng row và card-body group
+                    endif;
 
-                    <td>
-                        <?php if (isset($actions['add'])): ?>
-                            <input type="checkbox"
-                                name="permissions[<?= $actions['add']['id'] ?>]"
-                                <?= isset($current[$actions['add']['id']]) ? 'checked' : '' ?>>
-                        <?php endif; ?>
-                    </td>
+                    $currentGroup = $perm['group_name'];
+            ?>
+                    <!-- Tiêu đề group mới -->
+                    <div class="mb-4">
+                        <h5 class="text-primary fw-bold mb-3 border-bottom pb-2">
+                            <i class="fas fa-folder me-2"></i> <?= htmlspecialchars($currentGroup) ?>
+                        </h5>
+                        <div class="row">
+            <?php endif; ?>
 
-                    <td>
-                        <?php if (isset($actions['edit'])): ?>
-                            <input type="checkbox"
-                                name="permissions[<?= $actions['edit']['id'] ?>]"
-                                <?= isset($current[$actions['edit']['id']]) ? 'checked' : '' ?>>
-                        <?php endif; ?>
-                    </td>
+                        <!-- Mỗi quyền một ô -->
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       name="permission[<?= $perm['id'] ?>]" value="1"
+                                       id="perm_<?= $perm['id'] ?>"
+                                       <?= $perm['isAllowed'] ? 'checked' : '' ?>>
+                                <label class="form-check-label fw-medium" for="perm_<?= $perm['id'] ?>">
+                                    <?= htmlspecialchars($perm['description']) ?>
+                                </label>
+                            </div>
+                        </div>
 
-                    <td>
-                        <?php if (isset($actions['delete'])): ?>
-                            <input type="checkbox"
-                                name="permissions[<?= $actions['delete']['id'] ?>]"
-                                <?= isset($current[$actions['delete']['id']]) ? 'checked' : '' ?>>
-                        <?php endif; ?>
-                    </td>
+            <?php 
+            endforeach; 
+            // Đóng group cuối cùng
+            if ($currentGroup !== ''): 
+                echo '</div></div>'; 
+            endif; 
+            ?>
 
-                    <td>
-                        <?php if (isset($actions['view'])): ?>
-                            <input type="checkbox"
-                                name="permissions[<?= $actions['view']['id'] ?>]"
-                                <?= isset($current[$actions['view']['id']]) ? 'checked' : '' ?>>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            <?php } ?>
+            <div class="mt-4 pt-3 border-top">
+                <button type="submit" class="btn btn-success btn-lg px-5">
+                    <i class="fas fa-save me-2"></i> Lưu phân quyền
+                </button>
+                <a href="index.php?act=role" class="btn btn-secondary btn-lg px-5">
+                    <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+                </a>
+            </div>
 
-            </tbody>
-        </table>
-
+        </form>
     </div>
 </div>
-
-<button class="btn btn-success mt-3">Lưu phân quyền</button>
-<a href="index.php?act=roles" class="btn btn-secondary mt-3">Quay lại</a>
-
-</form>

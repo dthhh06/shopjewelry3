@@ -82,4 +82,30 @@ class ProductModel
 
         return $this->conn->query("DELETE FROM product WHERE id = $id");
     }
+    function updatePriceAndStock($product_id, $sale_price, $discount, $amount, $import_price = 0)
+    {
+        $product_id   = (int)$product_id;
+        $sale_price   = (int)$sale_price;
+        $discount     = (int)$discount;
+        $amount       = (int)$amount;
+        $import_price = (int)$import_price;
+
+        if ($sale_price <= 0 || $amount <= 0) {
+            return false;
+        }
+
+        $final_price = $sale_price * (100 - $discount) / 100;
+
+        if ($import_price > 0 && $import_price >= $final_price) {
+            return false;
+        }
+
+        $sql = "UPDATE product 
+                SET price = $sale_price,
+                    discount = $discount,
+                    quantity = quantity + $amount
+                WHERE id = $product_id";
+
+        return $this->conn->query($sql);
+    }
 }

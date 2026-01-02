@@ -4,8 +4,8 @@
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
                 <tr>
                     <th>ID</th>
                     <th>Nhà cung cấp</th>
@@ -19,21 +19,25 @@
                 <?php foreach ($imports as $i): ?>
                     <tr>
                         <td><?= $i['id'] ?></td>
-                        <td><?= $i['supplier_name'] ?></td>
-                        <td><?= $i['user_name'] ?></td>
-                        <td><?= $i['created_at'] ?></td>
-                        <td><?= number_format($i['total_import_order']) ?>đ</td>
+                        <td><?= htmlspecialchars($i['supplier_name']) ?></td>
+                        <td><?= htmlspecialchars($i['user_name']) ?></td>
+                        <td><?= date('d/m/Y H:i', strtotime($i['created_at'])) ?></td>
+                        <td class="text-end fw-bold"><?= number_format($i['total_import_order'] ?? 0) ?>đ</td>
                         <td>
-                            <a href="index.php?act=import-detail&id=<?= $i["id"] ?>"
-                                class="btn btn-info btn-sm">
-                                Xem
+                            <!-- Link chuyển trang chi tiết -->
+                            <a href="index.php?act=import-detail&id=<?= $i['id'] ?>" class="btn btn-info btn-sm">
+                                <i class="fas fa-eye"></i> Xem 
                             </a>
 
-                            <a href="index.php?act=import-delete&id=<?= $i['id'] ?>" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Xóa?')">Xóa</a>
+                            <!-- Nút xóa -->
+                            <a href="index.php?act=import-delete&id=<?= $i['id'] ?>"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa phiếu nhập #<?= $i['id'] ?>?')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </a>
                         </td>
                     </tr>
-                <?php endforeach ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>

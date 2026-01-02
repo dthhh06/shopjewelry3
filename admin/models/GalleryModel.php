@@ -1,41 +1,55 @@
 <?php
-class GalleryModel {
+class GalleryModel
+{
     private $conn;
 
-    function __construct($db) {
+    function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    function getAll() {
-        $sql = "SELECT * FROM gallery";
+    // Lấy tất cả ảnh theo sản phẩm (dùng cho admin)
+    function getAllByProduct($product_id)
+    {
+        $product_id = (int)$product_id;
+        $sql = "SELECT * FROM gallery WHERE product_id = $product_id ORDER BY sort_order, id DESC";
         return $this->conn->query($sql);
     }
 
-    function getById($id) {
-        $id = (int)$id;
-        $sql = "SELECT * FROM gallery WHERE id = $id";
-        return $this->conn->query($sql)->fetch_assoc();
-    }
-
-    function insert($title, $thumbnail) {
-        $sql = "INSERT INTO gallery(title, thumbnail) VALUES ('$title', '$thumbnail')";
+    // Lấy tất cả ảnh trong hệ thống (dùng cho trang quản lý chung nếu cần)
+    function getAll()
+    {
+        $sql = "SELECT g.*, p.title AS product_title 
+                FROM gallery g 
+                LEFT JOIN product p ON g.product_id = p.id 
+                ORDER BY g.id DESC";
         return $this->conn->query($sql);
     }
 
-    function update($id, $title, $thumbnail = null) {
-        $id = (int)$id;
+    // Thêm ảnh mới
+    function insert($product_id, $image_path, $sort_order = 0)
+    {
+        $product_id = (int)$product_id;
+        $sort_order = (int)$sort_order;
+        $image_path = $this->conn->real_escape_string($image_path);
+        
+        $sql = "INSERT INTO gallery (product_id, image_path, sort_order) 
+                VALUES ($product_id, '$image_path', $sort_order)";
+        return $this->conn->query($sql);
+    }
 
-        if ($thumbnail) {
-            $sql = "UPDATE gallery SET title='$title', thumbnail='$thumbnail' WHERE id=$id";
-        } else {
-            $sql = "UPDATE gallery SET title='$title' WHERE id=$id";
+    // Xóa ảnh
+    function delete($id)
+    {
+        $id = (int)$id;
+        // Lấy đường dẫn để xóa file thật
+        $sql_path = "SELECT image_path FROM gallery WHERE id = $id";
+        $result = $this->conn->query($sql_path);
+        if ($row = $result->fetch_assoc()) {
+            $path = $row['image_path'];
+            if (file_exists($path)) unlink($path);
         }
-
-        return $this->conn->query($sql);
-    }
-
-    function delete($id) {
-        $id = (int)$id;
+        
         $sql = "DELETE FROM gallery WHERE id = $id";
         return $this->conn->query($sql);
     }

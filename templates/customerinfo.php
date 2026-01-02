@@ -1,40 +1,31 @@
 <?php
 session_start();
 
-// kết nối DB (đảm bảo path đúng với cấu trúc của bạn)
 require_once __DIR__ . '/../database/connection.php';
 
-// Hàm chuẩn hoá đường dẫn avatar để trình duyệt có thể load được
 function normalizeAvatarPath($path)
 {
-	// mặc định (thay /shopjewelry3/ bằng tên folder project nếu khác)
 	$projectBase = '/shopjewelry3';
 
 	if (empty($path)) {
 		return $projectBase . '/assets/imgs/default-avatar.png';
 	}
 
-	// nếu DB lưu '../assets/...' => chuyển thành '/shopjewelry3/assets/...'
 	if (strpos($path, '../') === 0) {
 		return $projectBase . '/' . ltrim(str_replace('../', '', $path), '/');
 	}
 
-	// nếu đã là đường dẫn bắt đầu bằng '/' (ví dụ '/shopjewelry3/assets/...')
 	if (strpos($path, '/') === 0) {
 		return $path;
 	}
 
-	// nếu chỉ lưu tên file 'abc.jpg' hoặc 'assets/...'
-	// trả về đường dẫn chuẩn
 	if (strpos($path, 'assets/') === 0) {
 		return $projectBase . '/' . $path;
 	}
 
-	// mặc định nối project base + path
 	return $projectBase . '/' . ltrim($path, '/');
 }
 
-// Lấy thông tin user từ DB nếu đã login (session id có)
 $row = null;
 if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
 	try {
@@ -51,7 +42,6 @@ if (isset($_SESSION['id']) && !empty($_SESSION['id'])) {
 	}
 }
 
-// avatar dùng: ưu tiên DB ($row), nếu không thì session, cuối cùng là default
 $avatar_raw = $row['avatar'] ?? $_SESSION['avatar'] ?? null;
 $avatar_url = normalizeAvatarPath($avatar_raw);
 ?>
@@ -103,10 +93,9 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 					</h5>
 					<p style="font-weight: 600; font-size: 14px;">Xin chào, <span style="color: #d4af37; font-weight: 700"><?php echo '' . $_SESSION["fullname"] . '!'; ?></span></p>
 					<div class="btns-group">
-						<button type="button" class="btn" data-customerinfo__info>Thông tin tài khoản</button>
-						<button type="button" class="btn" data-customerinfo__orders>Đơn hàng của bạn</button>
-						<button type="button" class="btn" data-customerinfo__changepwd>Đổi mật khẩu</button>
-						<button type="button" class="btn" data-customerinfo_address>Sổ địa chỉ (0)</button>
+						<button type="button" class="btn mb-2" data-customerinfo__info>Thông tin tài khoản</button>
+						<button type="button" class="btn mb-2" data-customerinfo__orders>Đơn hàng của bạn</button>
+						<button type="button" class="btn mb-2" data-customerinfo__changepwd>Đổi mật khẩu</button>
 					</div>
 				</div>
 
@@ -115,7 +104,7 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 						THÔNG TIN TÀI KHOẢN
 					</h5>
 					<div class="customerinfo-content">
-						<div class="customerinfo__info d-none">
+						<div class="customerinfo__info d-none mb-3">
 
 							<!-- Ảnh đại diện -->
 							<div class="mb-3">
@@ -144,12 +133,12 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 							<hr>
 
 							<!-- Các thông tin khác -->
-							<span style="font-weight: 600; font-size: 16px;">Họ tên: </span>
-							<span style="font-size: 14px;"><?php echo $_SESSION["fullname"]; ?></span>
+							<span style="font-weight: 600; font-size: 18px;">Họ tên: </span>
+							<span style="font-size: 18px;"><?php echo $_SESSION["fullname"]; ?></span>
 							<br />
 
-							<span style="font-weight: 600; font-size: 16px;">Email: </span>
-							<span style="font-size: 14px;"><?php echo $_SESSION["useremail"]; ?></span>
+							<span style="font-weight: 600; font-size: 18px;">Email: </span>
+							<span style="font-size: 18px;"><?php echo $_SESSION["useremail"]; ?></span>
 						</div>
 
 
@@ -187,11 +176,7 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 								<input type="password" id="verifypwd" class="w-50">
 								<div class="error-message"></div>
 							</div>
-							<button type="button" class="btn btn-outline-none resetpwd-btn" style="color: #fff; background-color: #d4af37;">Đặt lại mật khẩu</button>
-						</div>
-
-						<div class="customerinfo_address d-none">
-							<button type="button" class="btn btn-outline-none" style="color: #fff; background-color: #d4af37;">Thêm địa chỉ</button>
+							<button type="button" class="btn btn-outline-none resetpwd-btn mb-5" style="color: #fff; background-color: #d4af37;">Đặt lại mật khẩu</button>
 						</div>
 
 						<!-- Order details (ẩn mặc định) -->

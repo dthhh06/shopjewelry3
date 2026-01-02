@@ -53,3 +53,46 @@
             if (e.key === 'Escape') closeUserDropdown();
         });
     })();
+//     // ===== cart dropdown: giống y chang user dropdown =====
+// (function() {
+//     const cartBtn = document.getElementById('cartBtn');
+//     const cartDropdown = document.getElementById('cartDropdown');
+
+//     if (!cartBtn || !cartDropdown) return;
+
+//     function closeCartDropdown() {
+//         cartDropdown.classList.remove('show');
+//         cartDropdown.setAttribute('aria-hidden', 'true');
+//         cartBtn.setAttribute('aria-expanded', 'false');
+//     }
+
+//     function openCartDropdown() {
+//         cartDropdown.classList.add('show');
+//         cartDropdown.setAttribute('aria-hidden', 'false');
+//         cartBtn.setAttribute('aria-expanded', 'true');
+//     }
+
+//     cartBtn.addEventListener('click', function(e) {
+//         e.stopPropagation();
+
+//         if (cartDropdown.classList.contains('show')) {
+//             closeCartDropdown();
+//         } else {
+//             openCartDropdown();
+//         }
+//     });
+
+//     // click ra ngoài thì đóng
+//     document.addEventListener('click', function(e) {
+//         const isClickInside =
+//             cartBtn.contains(e.target) ||
+//             cartDropdown.contains(e.target);
+
+//         if (!isClickInside) closeCartDropdown();
+//     });
+
+//     // nhấn ESC thì đóng
+//     document.addEventListener('keydown', function(e) {
+//         if (e.key === 'Escape') closeCartDropdown();
+//     });
+// })();

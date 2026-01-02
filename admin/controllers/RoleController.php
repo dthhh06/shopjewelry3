@@ -1,84 +1,109 @@
 <?php
-require_once "models/RoleModel.php";
+require_once __DIR__ . '/../models/RoleModel.php';
 
-class RoleController
-{
-
+class RoleController {
     private $model;
 
-    function __construct($db)
-    {
-        $this->model = new RoleModel($db);
+    public function __construct($conn) {
+        $this->model = new RoleModel($conn);
     }
 
-    function index()
-    {
-        $roles = $this->model->getAll();
-        $view = "views/roles/list.php";
+    public function index() {
+        $roles = $this->model->getAllRoles();
+        $view = 'views/roles/list.php';
         include "layouts/main.php";
     }
 
-    function create()
-    {
-        $view = "views/roles/create.php";
+    public function create() {
+        $view = 'views/roles/create.php';
         include "layouts/main.php";
     }
 
-    function store()
-    {
-        $this->model->insert($_POST['name']);
-        header("Location: index.php?act=roles");
-    }
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $description = $_POST['description'] ?? '';
 
-    function edit()
-    {
-        $role = $this->model->getById($_GET['id']);
-        $view = "views/roles/edit.php";
-        include "layouts/main.php";
-    }
-
-    function update()
-    {
-        $this->model->update($_POST['id'], $_POST['name']);
-        header("Location: index.php?act=roles");
-    }
-
-    function delete()
-    {
-        $this->model->softDelete($_GET['id']);
-        header("Location: index.php?act=roles");
-    }
-
-    /* ===================== PERMISSIONS ===================== */
-
-    function permissions()
-    {
-        $role_id = $_GET['id'];
-        $role = $this->model->getById($role_id);
-        $permissions = $this->model->getAllPermissions();
-
-        $current = [];
-        $rows = $this->model->getRolePermissions($role_id);
-        while ($r = $rows->fetch_assoc()) {
-            $current[$r['permission_id']] = $r['isAllowed'];
-        }
-
-        $view = "views/roles/permissions.php";
-        include "layouts/main.php";
-    }
-
-    function savePermissions()
-    {
-        $role_id = $_POST['role_id'];
-
-        $this->model->deleteRolePermissions($role_id);
-
-        if (!empty($_POST['permissions'])) {
-            foreach ($_POST['permissions'] as $pid => $on) {
-                $this->model->addPermission($role_id, $pid, 1);
+            if ($name === '') {
+                $_SESSION['error'] = 'Tên role không được để trống!';
+                header('Location: index.php?act=role-create');
+                exit;
             }
+
+            $this->model->createRole($name, $description);
+            header('Location: index.php?act=role&success=created');
+            exit;
+        }
+        header('Location: index.php?act=role');
+        exit;
+    }
+
+    public function edit() {
+        $id = $_GET['id'] ?? 0;
+        $role = $this->model->getRoleById($id);
+
+        if (!$role) {
+            $_SESSION['error'] = 'Role không tồn tại!';
+            header('Location: index.php?act=role');
+            exit;
         }
 
-        header("Location: index.php?act=roles");
+        $view = 'views/roles/edit.php';
+        include "layouts/main.php";
+    }
+
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? 0;
+            $name = trim($_POST['name'] ?? '');
+            $description = $_POST['description'] ?? '';
+
+            if ($id <= 0 || $name === '') {
+                $_SESSION['error'] = 'Dữ liệu không hợp lệ!';
+                header('Location: index.php?act=role');
+                exit;
+            }
+
+            $this->model->updateRole($id, $name, $description);
+            header('Location: index.php?act=role&success=updated');
+            exit;
+        }
+        header('Location: index.php?act=role');
+        exit;
+    }
+
+    public function delete() {
+        $id = $_GET['id'] ?? 0;
+        if ($id > 3) {
+            $this->model->deleteRole($id);
+            header('Location: index.php?act=role&success=deleted');
+            exit;
+        }
+        header('Location: index.php?act=role&error=cannot_delete');
+        exit;
+    }
+
+    public function permissions() {
+        $id = $_GET['id'] ?? 0;
+        $role = $this->model->getRoleById($id);
+
+        if (!$role) {
+            $_SESSION['error'] = 'Role không tồn tại!';
+            header('Location: index.php?act=role');
+            exit;
+        }
+
+        $permissions = $this->model->getPermissionsByRole($id);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $perms = $_POST['permission'] ?? [];
+            $this->model->updateRolePermissions($id, $perms);
+            header('Location: index.php?act=role-permissions&id=' . $id . '&success=updated');
+            exit;
+        }
+
+        $view = 'views/roles/permissions.php';
+        include "layouts/main.php";
     }
 }
+?>

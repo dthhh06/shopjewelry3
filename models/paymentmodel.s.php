@@ -59,7 +59,7 @@ class PaymentModel extends Database
         try {
             $pdo = $this->connect();
             $sql = "INSERT INTO momo_payments (order_id, amount, request_id, order_info, order_type, pay_url, signature, created_at)
-                    VALUES (?, ?, ?, ?, 'atm', ?, ?, NOW())";
+                    VALUES (?, ?, ?, ?, 'qr', ?, ?, NOW())";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([$orderId, $amount, $requestId, $orderInfo, $payUrl, $signature]);
             return true;

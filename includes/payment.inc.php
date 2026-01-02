@@ -5,12 +5,6 @@ include_once("../controllers/paymentcontr.s.php");
 
 if (session_status() == PHP_SESSION_NONE) session_start();
 
-// PHẢI bấm nút PLACE ORDER
-// if (!isset($_POST["place-order"])) {
-//     header("Location: ../templates/trangchu.php?notsubmitted");
-//     exit();
-// }
-
 // LẤY PHƯƠNG THỨC THANH TOÁN USER ĐÃ CHỌN
 $method = $_POST["selected_payment"] ?? "";
 
@@ -20,21 +14,41 @@ if ($method === "") {
     exit();
 }
 
-// ==== NẾU LÀ MOMO → chuyển sang momo_atm.php ====
+// ==== NẾU LÀ MOMO → lưu tạm thông tin giao hàng rồi chuyển sang momo_qr.php ====
 if ($method === "momo") {
-    header("Location: momo_atm.php");
-    exit();
-}
+    // Kiểm tra dữ liệu cần thiết giống như COD
+    if (!isset(
+        $_SESSION["id"],
+        $_SESSION["useremail"],
+        $_SESSION["fullname"],
+        $_SESSION["phone_number"],
+        $_POST["address"],
+        $_POST["district"],
+        $_POST["province"]
+    )) {
+        header("Location: ../templates/payment.php?err=missingdata");
+        exit();
+    }
 
-// ==== NẾU LÀ VNPAY → chuyển sang vnpay.php ====
-if ($method === "vnpay") {
-    header("Location: vnpay.php");
+    // Lưu tạm địa chỉ và note vào session để dùng sau khi MoMo callback
+    $_SESSION['momo_temp_address'] = $_POST["address"] . ", " . $_POST["district"] . ", " . $_POST["province"];
+    $_SESSION['momo_temp_note']    = $_POST["note"] ?? "";
+
+    // Chuyển hướng sang tạo QR MoMo
+    header("Location: momo_qr.php");
     exit();
 }
 
 // ==== COD → xử lý bình thường ====
-if (!isset($_SESSION["id"], $_SESSION["useremail"], $_SESSION["fullname"],
-          $_SESSION["phone_number"], $_POST["address"], $_POST["district"], $_POST["province"])) {
+if (!isset(
+    $_SESSION["id"],
+    $_SESSION["useremail"],
+    $_SESSION["fullname"],
+    $_SESSION["phone_number"],
+    $_POST["address"],
+    $_POST["district"],
+    $_POST["province"]
+)) {
     header("Location: ../templates/trangchu.php?missingdata");
     exit();
 }
