@@ -32,7 +32,20 @@
     $vndTotalOfOrder = number_format($totalOfOrder, 0, '', ',') . ' VND';
     ?>
 </head>
-
+<style>
+    .btn-gold-swal {
+        background: linear-gradient(135deg, #f1c40f, #d4ac0d) !important;
+        color: #3d2f00 !important;
+        font-weight: 700 !important;
+        padding: 12px 30px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 6px 15px rgba(212, 172, 13, 0.4) !important;
+    }
+    .btn-gold-swal:hover {
+        background: linear-gradient(135deg, #d4ac0d, #b7950b) !important;
+        transform: translateY(-2px);
+    }
+</style>
 <body>
 
     <!-- sweetalert2 -->
@@ -172,26 +185,75 @@
     </form>
 
     <!-- JS -->
-    <script>
-        $(document).ready(function() {
-            $("button[name='place-order']").click(function(e) {
-                e.preventDefault();
+<!-- Thêm vào cuối phần <script> hiện có trong payment.php, thay thế đoạn script cũ -->
+<script>
+    $(document).ready(function() {
 
-                const userId = $("#userid").data("userid");
-                if (userId === "none") {
-                    alert("Vui lòng đăng nhập để đặt hàng");
-                    return;
+        // === HIỆN ALERT THÀNH CÔNG KHI TRỞ LẠI TỪ payment.inc.php ===
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('order') === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Đặt hàng thành công!',
+                html: `
+                    <p style="font-size: 16px; margin: 10px 0;">Cảm ơn quý khách đã tin tưởng và mua sắm tại <strong>Aurelia Jewelry</strong> ❤️</p>
+                    <p style="font-size: 15px; color: #7f6000;">Chúng tôi sẽ sớm liên hệ để xác nhận đơn hàng của bạn.</p>
+                `,
+                confirmButtonText: '<i class="fas fa-file-invoice me-2"></i> Xem bill ngay',
+                confirmButtonColor: '#d4af37',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                background: '#fffdf7',
+                customClass: {
+                    popup: 'animated zoomIn faster',
+                    confirmButton: 'btn-gold-swal'
                 }
-
-                // Lấy phương thức thanh toán đã chọn
-                const payment = $("input[name='payment_method']:checked").val();
-                $("#selected_payment").val(payment);
-
-                // Luôn submit form về payment.inc.php
-                $("form.main").submit();
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = window.location.origin + "/shopjewelry3/templates/cod_success.php";
+                }
             });
+
+            // Xóa param để tránh hiện lại khi refresh
+            history.replaceState(null, null, window.location.pathname);
+        }
+
+        // === XỬ LÝ NÚT PLACE ORDER (giữ nguyên validation) ===
+        $("button[name='place-order']").click(function(e) {
+            e.preventDefault();
+
+            const userId = $("#userid").data("userid");
+            if (userId === "none") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa đăng nhập',
+                    text: 'Vui lòng đăng nhập để đặt hàng!',
+                    confirmButtonColor: '#d4af37'
+                });
+                return;
+            }
+
+            const province = $("input[name='province']").val().trim();
+            const district = $("input[name='district']").val().trim();
+            const address = $("input[name='address']").val().trim();
+
+            if (province === "" || district === "" || address === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Thiếu thông tin nhận hàng',
+                    text: 'Vui lòng nhập đầy đủ Tỉnh/Thành phố, Quận/Huyện và Địa chỉ chi tiết!',
+                    confirmButtonColor: '#d4af37'
+                });
+                return;
+            }
+
+            const payment = $("input[name='payment_method']:checked").val();
+            $("#selected_payment").val(payment);
+
+            $("form.main").submit();
         });
-    </script>
+    });
+</script>
 </body>
 
 </html>

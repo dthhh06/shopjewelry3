@@ -12,7 +12,7 @@ class StockController
 
     function index()
     {
-        $products = $this->model->getAll()->fetch_all(MYSQLI_ASSOC); // Lấy hết dưới dạng mảng
+        $products = $this->model->getAll()->fetch_all(MYSQLI_ASSOC);
         $view = "views/stock/list.php";
         include "layouts/main.php";
     }

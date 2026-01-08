@@ -71,12 +71,24 @@ if (empty($userProducts)) {
 $paymentObj = new PaymentController();
 $isPlaced = $paymentObj->placeOrder($userInfo, $userProducts);
 
-if ($isPlaced) {
+if ($isPlaced) {  // $isPlaced là orderId > 0
     unset($_SESSION["cart"]);
-    $_SESSION["order_placed"] = true;
-    header("Location: ../templates/trangchu.php?order=success");
-    exit();
-} else {
-    header("Location: ../templates/trangchu.php?order=failed");
+
+    // Tính tổng tiền
+    $totalOfOrder = 0;
+    foreach ($userProducts as $product) {
+        $totalOfOrder += intval($product['customer_quantity']) * intval($product['price']);
+    }
+    $totalOfOrderHasFee = $totalOfOrder + 40000;
+
+    // LƯU THÔNG TIN CHO COD_SUCCESS.PHP
+    $_SESSION["last_order_id"]     = $isPlaced;
+    $_SESSION["last_total_amount"] = $totalOfOrderHasFee;
+    $_SESSION["order_placed"]      = true;  // ← QUAN TRỌNG: Thêm dòng này!
+
+    // Xóa temp MoMo
+    unset($_SESSION["momo_temp_address"], $_SESSION["momo_temp_note"]);
+
+    header("Location: ../templates/payment.php?order=success");
     exit();
 }

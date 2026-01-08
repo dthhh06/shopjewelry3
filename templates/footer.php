@@ -30,7 +30,6 @@
         }
     }
 
-    /* Grid chính */
     .lux-footer-container {
         position: relative;
         z-index: 10;
@@ -39,7 +38,6 @@
         gap: 3rem;
     }
 
-    /* Logo */
     .lux-footer-logo {
         font-family: 'Cinzel', serif;
         font-size: 2.5rem;
@@ -107,7 +105,7 @@
         color: #c7c7c7;
     }
 
-    /* Social icons */
+
     .social-icons {
         margin-top: 1.2rem;
         display: flex;
@@ -129,7 +127,6 @@
         transform: translateY(-4px);
     }
 
-    /* Payment icons */
     .payment-icons {
         display: flex;
         gap: 15px;
@@ -177,7 +174,7 @@
 
         <!-- Logo -->
         <div class="lux-footer-section">
-            <a href="./trangchu.php" class="logo">
+            <a href="./trangchu.php" class="logo" style="font-size: 2rem; color:#bfbfbf !important">
                 <i class="fas fa-gem"></i>
                 AURELIA
             </a>

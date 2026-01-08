@@ -22,7 +22,7 @@
         </select>
     </div>
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-4 mb-3">
             <label>Giá</label>
             <input name="price" type="number" value="<?= $product['price'] ?>" class="form-control">
@@ -37,7 +37,7 @@
             <label>Số lượng</label>
             <input name="quantity" type="number" value="<?= $product['quantity'] ?>" class="form-control">
         </div>
-    </div>
+    </div> -->
 
     <div class="mb-3">
         <label>Ảnh hiện tại</label><br>

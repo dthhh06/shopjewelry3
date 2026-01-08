@@ -1,7 +1,4 @@
 // public/js/customerinfo.js
-// Nếu project của bạn dùng module imports (ví dụ config.js), giữ import.
-// Nếu không, bạn có thể bỏ import dòng dưới.
-// import { isEmpty, isCorrectVerifyPassword } from "./config.js";
 
 $(document).ready(function () {
   // Elements
@@ -18,6 +15,37 @@ $(document).ready(function () {
     });
   }
 
+  // Hàm trả về hiển thị trạng thái đơn hàng
+  function getOrderStatusDisplay(order) {
+    if (order.status == 0) {
+      return `<span class="badge bg-warning text-dark">Đang xử lý</span>`;
+    }
+
+    const orderDateTime = new Date(order.order_date.replace(" ", "T"));
+    const now = new Date();
+    const hoursPassed = (now - orderDateTime) / (1000 * 60 * 60);
+
+    if (hoursPassed >= 2) {
+      return `<span class="badge bg-success">Giao thành công</span>`;
+    } else {
+      return `<span class="badge bg-info text-white">Đang giao</span>`;
+    }
+  }
+
+  // Hàm trả về text thanh toán CHO CHI TIẾT ĐƠN (fix lỗi COD)
+  function getPaymentStatusDisplay(paymentMethod, orderStatus, hoursPassed) {
+    if (paymentMethod === "momo") {
+      return `<span style="color:green;font-weight:600">Đã thanh toán (MoMo)</span>`;
+    } else {
+      // COD hoặc không có
+      if (orderStatus == 1 && hoursPassed >= 2) {
+        return `<span style="color:green;font-weight:600">Đã thanh toán (Khi nhận hàng)</span>`;
+      } else {
+        return `<span style="color:red;font-weight:600">Chưa thanh toán</span>`;
+      }
+    }
+  }
+
   // Switch tab
   btnGroup.each(function () {
     $(this)
@@ -26,13 +54,12 @@ $(document).ready(function () {
         btnGroup.removeClass("active");
         $(this).addClass("active");
 
-        const key = Object.keys($(this).data())[0]; // ex: customerinfo__orders
+        const key = Object.keys($(this).data())[0];
         const elementOfLink = $(`.${key}`);
 
         customerinfoContent.removeClass("d-block").addClass("d-none");
         elementOfLink.removeClass("d-none").addClass("d-block");
 
-        // If orders tab opened, load orders
         if ($(this).is("[data-customerinfo__orders]")) {
           renderOrders();
         }
@@ -65,10 +92,6 @@ $(document).ready(function () {
     const rowsHtml = orders
       .map((order) => {
         const payment = order.payment_method || "";
-        const statusText =
-          payment === "momo"
-            ? `<span class="text-success fw-bold">Đã thanh toán</span>`
-            : `<span class="text-danger fw-bold">Chưa thanh toán</span>`;
 
         return `
           <tr class="order-row" 
@@ -77,14 +100,15 @@ $(document).ready(function () {
               data-orderaddress="${escapeHtml(order.address || '')}"
               data-ordertotal="${order.total_money}"
               data-payment="${payment}"
+              data-status="${order.status}"
               style="cursor:pointer"
           >
             <td class="text-center">#${order.id}</td>
             <td class="text-center">${order.order_date}</td>
             <td class="text-center">${escapeHtml(order.address || "Không có")}</td>
             <td class="text-center">${formatVndPrice(order.total_money)}</td>
-            <td class="text-center">${payment || "Không có"}</td>
-            <td class="text-center">${statusText}</td>
+            <td class="text-center">${payment || "COD"}</td>
+            <td class="text-center">${getOrderStatusDisplay(order)}</td>
           </tr>
         `;
       })
@@ -92,7 +116,6 @@ $(document).ready(function () {
 
     ordersTbody.html(rowsHtml);
 
-    // attach click
     $(".order-row").off("click").on("click", function () {
       const $tr = $(this);
       const value = {
@@ -101,12 +124,20 @@ $(document).ready(function () {
         orderaddress: $tr.data("orderaddress"),
         ordertotal: $tr.data("ordertotal"),
         payment: $tr.data("payment"),
+        status: $tr.data("status"),
       };
       handleSeeOrderDetails(value);
     });
+
+    // Tự động refresh mỗi 30 giây nếu đang ở tab đơn hàng
+    setTimeout(() => {
+      if ($(".customerinfo__orders").hasClass("d-block")) {
+        renderOrders();
+      }
+    }, 30000);
   }
 
-  // ------------------ Escape HTML (prevent XSS from DB text) ------------------
+  // ------------------ Escape HTML ------------------
   function escapeHtml(unsafe) {
     return String(unsafe)
       .replace(/&/g, "&amp;")
@@ -118,7 +149,6 @@ $(document).ready(function () {
 
   // ------------------ Show order details ------------------
   function handleSeeOrderDetails(value) {
-    // call API to get details
     $.ajax({
       type: "GET",
       url: "../includes/customerorderdetails.inc.php",
@@ -131,40 +161,55 @@ $(document).ready(function () {
         try {
           data = JSON.parse(response);
         } catch (e) {
-          console.error("Invalid JSON from order details:", e, response);
+          console.error("Invalid JSON:", e, response);
           orderDetailsWrap.html(`<div class="alert alert-danger">Lỗi khi tải chi tiết đơn hàng.</div>`);
           return;
         }
 
-        // hide other sections, show detail
+        const firstItem = data[0] || {};
+        const orderDateTime = new Date(value.orderdate.replace(" ", "T"));
+        const now = new Date();
+        const hoursPassed = (now - orderDateTime) / (1000 * 60 * 60);
+
+        const statusDisplay = getOrderStatusDisplay({ status: value.status, order_date: value.orderdate });
+        const paymentStatus = getPaymentStatusDisplay(value.payment, value.status, hoursPassed);
+
         $(".customerinfo-content > div").addClass("d-none");
         orderDetailsWrap.removeClass("d-none");
 
-        const paymentStatus = value.payment === "momo"
-          ? `<span style="color:green;font-weight:600">Đã thanh toán (MoMo)</span>`
-          : `<span style="color:red;font-weight:600">Chưa thanh toán</span>`;
-
         let html = `
-          <button class="btn btn-outline-secondary mb-3 back-btn">← Quay lại</button>
+          <button class="btn btn-outline-secondary mb-3 back-btn">← Quay lại danh sách đơn hàng</button>
 
-          <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <h5>Chi tiết đơn hàng #${value.orderid}</h5>
-            <p>Ngày tạo: ${value.orderdate}</p>
+            <div class="text-end">
+              <p class="mb-0">Ngày đặt: ${value.orderdate}</p>
+              <p class="mb-0"><strong>Trạng thái:</strong> ${statusDisplay}</p>
+            </div>
           </div>
 
-          <div class="mb-2">
-            <p class="mb-1"><strong>Địa chỉ giao:</strong> ${escapeHtml(value.orderaddress || "Không có")}</p>
-            <p class="mb-1"><strong>Thanh toán:</strong> ${paymentStatus}</p>
-            <p class="mb-1"><strong>Tổng đơn:</strong> ${formatVndPrice(value.ordertotal)}</p>
+          <hr>
+
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <p><strong>Người nhận:</strong> ${escapeHtml(firstItem.fullname || "Không có")}</p>
+              <p><strong>SĐT:</strong> ${escapeHtml(firstItem.phone_number || "Không có")}</p>
+              <p><strong>Địa chỉ:</strong> ${escapeHtml(value.orderaddress || "Không có")}</p>
+              <p><strong>Ghi chú:</strong> ${escapeHtml(firstItem.note || "Không có")}</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <p><strong>Phương thức thanh toán:</strong> ${paymentStatus}</p>
+              <p><strong>Tổng tiền:</strong> <span style="font-size:1.2em;color:#d4af37">${formatVndPrice(value.ordertotal)}</span></p>
+            </div>
           </div>
 
           <table class="table table-bordered">
-            <thead>
+            <thead class="table-light">
               <tr class="text-center">
                 <th>Sản phẩm</th>
                 <th>Đơn giá</th>
                 <th>Số lượng</th>
-                <th>Tổng</th>
+                <th>Thành tiền</th>
               </tr>
             </thead>
             <tbody>
@@ -175,12 +220,11 @@ $(document).ready(function () {
         } else {
           html += data
             .map((item) => {
-              // Fields expected from model: thumbnail, title, orderdetail_price, num, total_money
               return `
-                <tr class="text-center">
+                <tr class="text-center align-middle">
                   <td class="text-start">
-                    <img src="${escapeHtml(item.thumbnail || '')}" style="width:80px;height:80px;object-fit:cover" alt="">
-                    <span class="ms-2">${escapeHtml(item.title || '')}</span>
+                    ${item.thumbnail ? `<img src="${escapeHtml(item.thumbnail)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" alt="">` : ''}
+                    <span class="ms-3">${escapeHtml(item.title || 'Sản phẩm')}</span>
                   </td>
                   <td>${formatVndPrice(Number(item.orderdetail_price || 0))}</td>
                   <td>${item.num || 0}</td>
@@ -195,26 +239,26 @@ $(document).ready(function () {
 
         orderDetailsWrap.html(html);
 
-        // back button
         orderDetailsWrap.find(".back-btn").off("click").on("click", function () {
           orderDetailsWrap.addClass("d-none");
-          $(".customerinfo__orders").removeClass("d-none");
+          $(".customerinfo__orders").removeClass("d-none").addClass("d-block");
+          renderOrders();
         });
       },
-      error: function (xhr, status, err) {
-        console.error("AJAX error:", err);
+      error: function () {
         orderDetailsWrap.html(`<div class="alert alert-danger">Lỗi tải chi tiết đơn hàng</div>`);
       },
     });
   }
 
-  // Initially: show account info by default
+  // Tab mặc định
   $(".btns-group > .btn").first().trigger("click");
 });
 
-document.getElementById("avatarInput").addEventListener("change", function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        document.getElementById("avatarPreview").src = URL.createObjectURL(file);
-    }
+// Preview avatar
+document.getElementById("avatarInput")?.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (file) {
+    document.getElementById("avatarPreview").src = URL.createObjectURL(file);
+  }
 });

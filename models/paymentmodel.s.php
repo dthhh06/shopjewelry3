@@ -24,13 +24,13 @@ class PaymentModel extends Database
                 $transId
             ]);
 
-            $orderId = $pdo->lastInsertId();
+            $orderId = $pdo->lastInsertId(); // Lấy ID đơn hàng vừa tạo
 
             // Lưu chi tiết từng sản phẩm kèm giá tại thời điểm mua
             foreach ($userProducts as $product) {
                 $productId = $product["id"];
                 $productQuantity = $product["customer_quantity"];
-                $productPrice = $product["price"]; // giá lúc mua
+                $productPrice = $product["price"];
 
                 $sqlOrderDetails = "INSERT INTO `orderdetail` (`order_id`, `product_id`, `num`, `price`) 
                                     VALUES (?, ?, ?, ?)";
@@ -44,11 +44,13 @@ class PaymentModel extends Database
             }
 
             $pdo->commit();
-            return true;
+            return $orderId; // ← TRẢ VỀ ORDER ID THAY VÌ TRUE
 
         } catch (Exception $e) {
-            error_log($e->getMessage());
-            $pdo->rollBack();
+            error_log("Error placing order: " . $e->getMessage());
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             return false;
         }
     }

@@ -47,7 +47,14 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
+<style>
+	.status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+</style>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,15 +154,19 @@ $avatar_url = normalizeAvatarPath($avatar_raw);
 								<thead style="background-color: #d4af37; color: #fff;">
 									<tr class="text-center">
 										<th>Đơn hàng</th>
-										<th>Ngày</th>
+										<th>Ngày đặt</th>
 										<th>Địa chỉ</th>
 										<th>Tổng tiền</th>
 										<th>Thanh toán</th>
-										<th>Trạng thái</th>
+										<th>Trạng thái đơn</th> <!-- Cột mới, đẹp hơn -->
 									</tr>
 								</thead>
 								<tbody class="customerinfo__orders-tbody">
-									<!-- Using JavaScript to render -->
+									<!-- Nội dung sẽ được JS render ở đây -->
+									<!-- Ban đầu để trống hoặc loading -->
+									<tr>
+										<td colspan="6" class="text-center">Đang tải đơn hàng...</td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
